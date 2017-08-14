@@ -1,0 +1,5 @@
+---
+
+- name: stop es
+  tags: stop
+  clueserv: name=es path={{ es_home }} state=stopped

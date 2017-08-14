@@ -1,0 +1,7 @@
+---
+
+- hosts : hdfs
+  
+
+  roles:
+          - hdfs

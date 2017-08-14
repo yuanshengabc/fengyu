@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: deepclue-spring-boot-sample
+
+logging:
+    path: /data/deepclue-spring-boot-sample/log
+    level:
+         root: info
+    config: classpath:logback-spring.xml

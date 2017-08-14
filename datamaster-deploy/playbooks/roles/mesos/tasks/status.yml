@@ -1,0 +1,39 @@
+---
+
+- name: get mesos master status
+  tags: status,status_master
+  clueserv: name=mesos path={{ mesos_home }} state=status arg="-m master"
+  register: master_status
+  when:
+    - is_mesos_master is defined
+    - is_mesos_master
+
+- debug: msg={{ master_status }}
+  tags: status,status_master
+  when:
+    - is_mesos_master is defined
+    - is_mesos_master
+
+- name: get mesos slave status
+  tags: status,status_slave
+  clueserv: name=mesos path={{ mesos_home }} state=status arg="-m slave"
+  register: slave_status
+
+- debug: msg={{ slave_status }}
+  tags: status,status_slave
+
+- name: get mesos cluster status
+  tags: status,status_cluster
+  uri:
+    url: "http://{{ mesos_master_ip }}:{{ mesos_master_port }}/state.json"
+    return_content: yes
+  register: clu_status
+  run_once: True
+
+- name: debug
+  tags: status,status_cluster
+  vars:
+    res: "{{ clu_status.content | from_json }}"
+  debug: msg={{ res.slaves | map(attribute='hostname') | list }}
+  run_once: True
+  

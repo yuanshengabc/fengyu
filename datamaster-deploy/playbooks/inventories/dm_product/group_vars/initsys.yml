@@ -1,0 +1,8 @@
+---
+path: "{{work_root_dir}}"
+#scala_package: scala-2       #scala安装文件  正则匹配
+os_package: centos_install.tar.gz          #所有依赖yum包按类型 分类打包文件 
+os_child_path: [gcc,iotop,kernel-tools,nfs,ntp,subversion,sysstat]   # 依赖文件文件夹名称
+
+
+inet_card: ansible_em1        #网卡名称

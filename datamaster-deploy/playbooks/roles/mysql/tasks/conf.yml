@@ -1,0 +1,62 @@
+---
+
+
+
+- name: conf my.conf
+  tags: conf
+  sudo: yes
+  template: src=my.cnf.j2 dest=/etc/my.cnf
+
+- name: set selinux to permissive
+  tags: conf
+  sudo: yes
+  selinux: policy=targeted state=permissive
+
+- name: shutdown selinux
+  tags: conf
+  sudo: yes
+  selinux: state=disabled
+
+#- name: check mysql status
+#  tags: conf
+#  clueserv: name=mysql path={{ mysql_home }} state=status
+#  register: mysql_status
+
+- name: start mysql
+  tags: conf
+  sudo: yes
+  shell: systemctl start mysqld 
+  #when:  mysql_status.status == 'stopped'
+
+- name: enable mysql
+  tags: conf
+  sudo: yes
+  shell: systemctl enable mysqld 
+
+- name: get root password
+  tags: conf
+  sudo: yes
+  shell: grep 'temporary password' /var/log/mysqld.log | awk -F 'localhost:' '{print $2}' | awk -F ' ' '{print $1}'
+  register: defaultpsw
+
+- name: copy init file to  mysql
+  tags: conf
+  template: src="{{ item.tmpl }}" dest="{{ mysql_home }}/control/{{ item.dst }}"
+  with_items:
+    - { tmpl: mariadbinit.exp.j2, dst: mariadbinit.exp }
+    - { tmpl: mysql_conf.py.j2, dst: mysql_conf.py }
+  register: confstat
+
+- name: init mysql
+  sudo: yes
+  #mysql -uroot -p{{mysql_root_pass}} -e"grant all privileges on *.* to root@'%' identified by '$psw' with grant option;"
+  tags: conf
+  shell: |
+    expect {{mysql_home}}/control/mariadbinit.exp
+    mysql -uroot -p{{mysql_root_pass}} -e"CREATE USER '{{mysql_user}}'@'%' IDENTIFIED BY '{{mysql_root_pass}}'; "
+    mysql -uroot -p{{mysql_root_pass}} -e"GRANT ALL privileges ON *.* TO '{{mysql_user}}'@'%' IDENTIFIED BY '{{mysql_root_pass}}';" 
+    mysql -uroot -p{{mysql_root_pass}} -e"flush privileges;" 
+
+- name: remove  mariadbinit.exp
+  tags: conf
+  file: path={{mysql_home}}/control/mariadbinit.exp state=absent

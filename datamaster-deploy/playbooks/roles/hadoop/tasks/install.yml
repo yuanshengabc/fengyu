@@ -1,0 +1,62 @@
+---
+
+- block:
+  - name: check package list
+    tags: install,find_package
+    find: paths={{ publish_library }} use_regex=True patterns="^{{ hadoop_package }}"
+    register: pkg_files
+    delegate_to: 127.0.0.1
+    failed_when: pkg_files.matched == 0
+
+  - name: get the package name
+    tags: install,find_package
+    #vars:
+      #- pkg_file_name: "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+    shell: echo "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+    register: pkg_file_name
+    delegate_to: 127.0.0.1
+    changed_when: False
+
+  - debug: msg="package = {{ pkg_file_name.stdout }}"
+    tags: install,find_package
+    delegate_to: 127.0.0.1
+
+  - name: sync installation package
+    tags: install
+    copy: src={{ pkg_file_name.stdout }} dest={{ remote_pkgs_library }}/
+
+  - name: link installation package
+    tags: install
+    file: src="{{ remote_pkgs_library }}/{{ pkg_file_name.stdout | basename }}" dest={{ remote_pkgs_library }}/elasticsearch.used state=link
+
+  - name: install package
+    tags: install
+    vars:
+      - src_pkg_full_path: "{{ remote_pkgs_library }}/{{ pkg_file_name.stdout | basename }}"
+    shell: >
+      mkdir -p {{ hadoop_install_root }} && cd {{ hadoop_install_root }}
+      && pkg_name=`tar -tzf {{ src_pkg_full_path }} | head -1 | cut -d "/" -f 1`
+      && rm -rf ${pkg_name}
+      && tar -xzf {{ src_pkg_full_path }}
+      && ln -s -f -T ${pkg_name} hadoop
+      warn=no
+
+  - name: install control
+    tags: install,install_control
+    copy: src=files/control dest="{{ hadoop_home }}/"
+  
+  - name: set HADOOP_HOME in env
+    tags: install
+    lineinfile:
+      line: "export HADOOP_HOME={{hadoop_home}}"
+      dest: "/home/{{remote_user}}/.bashrc"
+      regexp: "^export HADOOP_HOME=.*/hadoop.*"
+      insertbefore: "^[ \t]*#.*deepclue:END"
+
+  - name: set hadoop_bin hadoop_sbin in path
+    tags: install
+    lineinfile:
+      line: "export PATH=${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${PATH}"
+      dest: "/home/{{remote_user}}/.bashrc"
+      regexp: "^export PATH=.*{HADOOP_HOME}/bin.*"
+      insertbefore: "^[ \t]*#.*deepclue:END"  

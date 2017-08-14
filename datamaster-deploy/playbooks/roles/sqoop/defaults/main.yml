@@ -1,0 +1,4 @@
+---
+
+sqoop_install_root: "{{ components_library }}"
+sqoop_home: "{{sqoop_install_root}}/sqoop"

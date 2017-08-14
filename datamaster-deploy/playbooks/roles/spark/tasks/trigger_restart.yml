@@ -1,0 +1,8 @@
+---
+
+- name: trigger restart
+  tags: danger,restart
+  shell: echo "trigger restart"
+  notify:
+    - restart mesos
+

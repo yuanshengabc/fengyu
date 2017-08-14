@@ -1,0 +1,40 @@
+{
+  "ObjectTypes": [
+    {
+      "name": "ly_saraly",
+      "baseType": "Entity",
+      "properties": [
+        {
+          "name": "id",
+          "baseType": "Int"
+        },
+        {
+          "name": "first_name",
+          "baseType": "Text"
+        },
+        {
+          "name": "age",
+          "baseType": "Int"
+        },
+        {
+          "name": "ll",
+          "baseType": "BigInt"
+        },
+        {
+          "name": "dd",
+          "baseType": "Double"
+        }
+      ],
+      "propertyGroups": [
+        {
+          "name": "personal information",
+          "properties": [
+            { "name": "birthday", "baseType": "Date" },
+            { "name": "chinese_name", "baseType": "Text"},
+            { "name": "saraly", "baseType": "Float"}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+---
+
+java_install_root: /usr/java
+java_home: "{{java_install_root}}/default"
+java_package: jdk-8u121-linux-x64.tar.gz

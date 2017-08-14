@@ -1,0 +1,4 @@
+hdfsConfig:
+  server: 172.24.8.115
+  port: 9000
+  username: magneto

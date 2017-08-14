@@ -1,0 +1,57 @@
+spring:
+  profiles:
+    # active env
+    active: dev
+logging:
+    path: /data/datamaster/log
+    level:
+         root: info
+    config: classpath:logback-spring.xml
+
+esconfig:
+  clusterName: datamaster
+  clusterIp: 172.24.8.115
+  shardsNum: 5
+  replicasNum: 1
+  parallelism: 2
+
+standaloneKafkaConfig:
+  schemaRegServer: 172.24.8.115
+  zkConfig:
+    zkUrl: 172.24.8.115:2181
+    sessionTimeout: 5000
+    connectionTimeout: 5000
+
+clusterKafkaConfig:
+  schemaRegServer: 172.24.8.111
+  zkConfig:
+    zkUrl: 172.24.8.111:2181,172.24.8.112:2181
+    sessionTimeout: 5000
+    connectionTimeout: 5000
+
+mysqlConfig:
+  ip: 172.24.8.115
+  port: 3306
+  database: datamaster
+  username: datamaster
+  password: datA123!@#
+
+standaloneHDFSConfig:
+  server: 172.24.8.115
+  port: 9000
+  clusterName: datamaster
+  username: magneto
+  zkConfig:
+    zkUrl: 172.24.8.115
+    sessionTimeout: 5000
+    connectionTimeout: 5000
+
+clusterHDFSConfig:
+  server:
+  port: 9000
+  clusterName: datamaster
+  username: magneto
+  zkConfig:
+    zkUrl: 172.24.8.111:2181,172.24.8.112:2181
+    sessionTimeout: 5000
+    connectionTimeout: 5000

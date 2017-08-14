@@ -1,0 +1,28 @@
+---
+
+es_cluster_name: Pls-Set-ES-Cluster-Name
+es_node_name: "{{ ansible_nodename }}"
+es_listen_ip: 127.0.0.1
+es_port: 9200
+
+es_data_root: /data/datamaster/elasticsearch
+es_install_root: "{{ components_library }}"
+
+es_home: "{{ es_install_root }}/elasticsearch"
+
+es_path_plugins: "{{ es_home }}/plugins"
+
+es_path_data: "{{ es_data_root }}/data"
+es_path_log: "{{ es_data_root }}/logs"
+es_path_work: "{{ es_data_root }}/work"
+es_path_run: "{{ es_data_root }}/run"
+es_path_pidfile: "{{ es_path_run }}/es.pid"
+
+es_unicast_hosts: ["127.0.0.1", "[::1]"]
+es_half_hosts_num: "{{ es_unicast_hosts | length / 2 }}"
+es_min_master_node: "{{ es_half_hosts_num | int + 1 }}"
+
+es_half_memory: "{{ ansible_memtotal_mb / 2 }}"
+es_heap_size: "{{ [es_half_memory | int, 32000] | min }}m"
+
+

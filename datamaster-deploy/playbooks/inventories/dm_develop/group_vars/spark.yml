@@ -1,0 +1,8 @@
+
+# spark
+spark_package: spark-1.6.0-bin-hadoop2.6.tgz #安装包名称 使用开始字符串匹配 格式为tar.gz
+
+spark_install_root: "{{ components_library }}"   #安装目录
+spark_data_root: /data/datamaster/spark #数据目录
+
+spark_home: "{{spark_install_root}}/spark" # 程序home 目录

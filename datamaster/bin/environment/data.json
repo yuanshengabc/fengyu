@@ -1,0 +1,18 @@
+{ "index" : { "_index" : "ds_1_rs_1", "_type" : "ds_1_rs_1", "_id" : "1" } }
+{ "field1" : "value1" , "field2": 1 }
+{ "index" : { "_index" : "ds_1_rs_1", "_type" : "ds_1_rs_1", "_id" : "2" } }
+{ "field1" : "value2" , "field2": 2, "field3":"2009-03-23T12:30:00" }
+{ "index" : { "_index" : "ds_1_rs_1", "_type" : "ds_1_rs_1", "_id" : "3" } }
+{ "field1" : "你好啊" , "field2": 3 }
+{ "index" : { "_index" : "ds_1_rs_1", "_type" : "ds_1_rs_1", "_id" : "4" } }
+{ "field1" : "湖北省公安厅" , "field2": 4, "filed3":"2017-04-11T00:00:01" }
+{ "index" : { "_index" : "ds_1_rs_1", "_type" : "ds_1_rs_1", "_id" : "5" } }
+{ "field1" : "国外机构" , "field2": 5 }
+{ "index" : { "_index" : "ds_1_rs_1", "_type" : "ds_1_rs_1", "_id" : "6" } }
+{ "field1" : "政府部门" , "field2": 6 }
+{ "index" : { "_index" : "ds_1_rs_1", "_type" : "ds_1_rs_1", "_id" : "7" } }
+{ "field1" : "政府部门" , "field2": 6 }
+{ "index" : { "_index" : "ds_1_rs_1", "_type" : "ds_1_rs_1", "_id" : "8" } }
+{ "field1" : "政府部门" , "field2": 6 }
+{ "index" : { "_index" : "ds_1_rs_1", "_type" : "ds_1_rs_1", "_id" : "9" } }
+{ "field1" : "国外机构" , "field2": 5 }

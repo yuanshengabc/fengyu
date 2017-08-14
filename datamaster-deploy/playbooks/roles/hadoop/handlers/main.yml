@@ -1,0 +1,6 @@
+---
+
+- name: restart hadoop
+  include: restart.yml
+  listen: "restart hadoop"
+

@@ -1,0 +1,21 @@
+---
+
+- name: clear jar
+  tags: danger,clear
+  file: path={{ jar_path }} state=absent
+  failed_when: False
+
+- name: clear conf
+  tags: danger,clear
+  file: path={{ datamaster_conf_dir }} state=absent
+  failed_when: False
+
+- name: clear bin
+  tags: danger,clear
+  file: path={{ datamaster_bin_dir }} state=absent
+  failed_when: False
+
+- name: clear control
+  tags: danger,clear
+  file: path={{ datamaster_home }}/control state=absent
+  failed_when: False

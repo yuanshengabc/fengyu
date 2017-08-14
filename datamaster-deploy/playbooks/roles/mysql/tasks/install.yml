@@ -1,0 +1,63 @@
+---
+
+- block:
+  - name: check mysql package
+    tags: install,find_package
+    find: paths={{ publish_library }} use_regex=True patterns="^{{ mysql_package }}" file_type=file
+    register: pkg_files
+    delegate_to: 127.0.0.1
+    failed_when: pkg_files.matched == 0
+
+  - name: get the package name
+    tags: install,find_package
+    #vars:
+      #- pkg_file_name: "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+    shell: echo "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+    register: pkg_file_name
+    delegate_to: 127.0.0.1
+    changed_when: False
+
+  - debug: msg="package = {{ pkg_file_name.stdout }}"
+    tags: install,find_package
+    delegate_to: 127.0.0.1
+
+  - name: sync installation package
+    tags: install
+    copy: src={{ pkg_file_name.stdout }} dest={{ remote_pkgs_library }}/
+
+  - name: tar package
+    tags: install
+    sudo: yes
+    vars:
+      - src_pkg_full_path: "{{ remote_pkgs_library }}/{{ pkg_file_name.stdout | basename }}"
+    shell: >
+      cd {{ remote_pkgs_library }}
+      && tar -xvf {{ src_pkg_full_path }}
+      warn=no
+
+  - name: list all packages from {{remote_pkgs_library}}
+    tags: install
+    find: paths={{ remote_pkgs_library }}/{{mysql_package}} use_regex=True patterns=".*"
+    register: pkg_file1s
+    failed_when: pkg_file1s.matched == 0
+
+  - name: yum all packages
+    tags: install
+    sudo: yes
+    yum: name={{ item }} state=present
+    with_items:
+      - "{{ pkg_file1s.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list }}"
+
+  - name: ack {{mysql_home}} is exist
+    tags: install
+    sudo: yes
+    file: path={{mysql_home}}  mode=777 state=directory
+
+  - name: ack {{datadir}} is exist
+    tags: install
+    sudo: yes
+    file: path={{datadir}}  mode=775 owner=mysql group=mysql state=directory 
+
+  - name: install control
+    tags: install,install_control
+    copy: src=files/control dest="{{ mysql_home }}"

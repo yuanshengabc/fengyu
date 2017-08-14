@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.deepclue.autoconfigure.mircoservice.MicroserviceAutoConfiguration

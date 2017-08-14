@@ -1,0 +1,67 @@
+---
+  - name: test /opt
+    tags: install, install_dir
+    sudo: yes
+    file: path={{item}} mode=775 owner={{root_dirs_owner}} group={{root_dirs_owner}} state=directory
+    with_items:
+      - "{{root_dirs}}"
+
+  - name: check package list
+    tags: install,find_package
+    find: paths={{ publish_library }} use_regex=True patterns="^{{ os_package}}"
+    register: pkg_files
+    delegate_to: 127.0.0.1
+    failed_when: pkg_files.matched == 0
+
+  - name: get the package name
+    tags: install,find_packge
+    #vars:
+      #- pkg_file_name: "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+    shell: echo "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+    register: pkg_file_name
+    delegate_to: 127.0.0.1
+    changed_when: False
+
+  - debug: msg="package = {{ pkg_file_name.stdout }}"
+    tags: install,find_package
+    delegate_to: 127.0.0.1
+
+  - name: sync installation package
+    tags: install
+    copy: src={{ pkg_file_name.stdout }} dest={{ remote_pkgs_library }}
+
+  - name: tar -xvzf centos_install
+    tags: install
+    shell: |
+      cd {{remote_pkgs_library}}
+      rm -rf centos_install
+      tar -xvzf {{remote_pkgs_library}}/{{pkg_file_name.stdout | basename}} centos_install
+  #- name: link installation package
+    #tags: install
+    #sudo: yes
+    #file: src="{{ remote_pkgs_library }}/{{ pkg_file_name.stdout | basename }}" dest={{ remote_pkgs_library }}/java.used state=link
+  - name: yum centos_install rpm
+    tags: install
+    sudo: yes
+    #yum: name={{remote_pkgs_library}}/centos_install/{{item}}/.*\.rpm state=present
+    shell: sh {{remote_pkgs_library}}/centos_install/{{item}}/install {{remote_pkgs_library}}/centos_install/{{item}}/
+    with_items:
+      - "{{ os_child_path }}"
+    failed_when: 0
+  #- name: check package list from gcc
+  #  tags: install,find_package
+  #  find: paths={{remote_pkgs_library}}centos_install/{{os_child_path[0]}} use_regex=True patterns=".*\.rpm$"
+  #  register: pkg_path_files
+  #  failed_when: pkg_path_files.matched == 0
+
+  #- name: yum gcc rpm
+  #  tags: install,find_packge
+  #  yum: name={{item.path}} state=present
+  #  with_items:
+  #    - "{{pkg_path_files.files}}"
+
+  #- name: yum packsage
+    #tags: install,find_packge
+    #yum: name={{item.path}} state=present
+    #with_items:
+      #- pkg_files.results.files

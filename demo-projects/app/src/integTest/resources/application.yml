@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    # active env
+    active: dev
+  datasource:
+    schema: classpath:sql/drop.sql,classpath:sql/schema.sql
+    data: classpath:sql/data.sql
+    initialize: true
+    continue-on-error: false
+    name: demo_app_integ
+    # mysql username
+    username: test
+    # Mysql password
+    password: test
+    # Mysql connection url
+    url: jdbc:mysql://172.24.8.100:3306/demo_app_integ?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=true&createDatabaseIfNotExist=true&zeroDateTimeBehavior=convertToNull
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    sql-script-encoding: UTF-8

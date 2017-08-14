@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+source ${BINPATH}/fusion/common.sh
+
+input=`python ${BINPATH}/fusion/receive.py`
+
+fsid=$(echo ${input} | grep -P '(?<=fsid":")(.+?)(?=")' -o)
+table_path="/fusion/"${fsid}"/tables"
+
+hadoop=hadoop
+${hadoop} fs -test -e ${table_path}
+if [ $? -ne 0 ]
+then
+    echo "Input directory: "${table_path}" do not exists!"
+    python ${BINPATH}/fusion/import-tables.py <<< "$input"
+fi
+
+exec spark-submit \
+        --class "cn.deepclue.datamaster.fusion.CalculateSimilarObjectPair" \
+        --jars ${spark_avro_path},${datamaster_streamer_path},${commons_codec_path} \
+        --driver-class-path ${sparklibs} \
+        ${base}fusion-*.jar $@ <<< "$input"

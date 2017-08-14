@@ -1,0 +1,98 @@
+---
+
+  - block:
+
+    - name: config datamaster
+      tags: conf
+      shell: echo "start config"
+      register: confstat
+
+
+    #- name: run java  tomcat set
+    #  tags: conf
+    #  shell: |
+    #   ver = cat {{ver}}
+    #   java {{jvm_opts}} -cp {{magneto_home}}/lib/mgwebcommon-$ver.jar:{{class_path}} com.tianhe.mgwebcommon.tools.Release {{serverJsonFile}}
+    - name: test datamaster_home
+      tags: conf 
+      file: path={{datamaster_home}} mode=775 state=directory
+
+    - name: test datamaster_path_logs
+      tags: conf
+      file: path={{datamaster_path_logs}} mode=775 state=directory
+
+    - name: copy confpy files
+      tags: conf, copy_conf
+      template : src={{item.tpl}} dest={{item.dest}} mode=775
+      with_items:
+        - {tpl: datamaster_conf.py.j2,dest: "{{datamaster_home}}/control/datamaster_conf.py"}
+
+    - name: test datamaster_conf_dir
+      tags: conf
+      file: path={{datamaster_conf_dir}} mode=775 state=directory
+
+    - name: conf application
+      tags: conf, copy_application
+      template: src={{item.tpl}} dest={{item.dest}} mode=664
+      with_items:
+        - {tpl: application.yml.j2,dest: "{{datamaster_conf_dir}}/application.yml"}
+        - {tpl: quartz.properties.j2,dest: "{{datamaster_conf_dir}}/quartz.properties"}
+    #- name: set shell files 777
+      #tags: conf
+      #sudo: yes
+      #shell: "chmod 777 {{magneto_home}}/control/*"
+
+#    - name: test datamaster_bin_dir
+#      tags: conf
+#      file: path={{datamaster_bin_dir}} mode=775 state=directory
+
+    - name: check dmbin package
+      tags: conf
+      find: paths={{ business_library }} patterns={{ dmbin_package }}
+      register: pkg_files
+      delegate_to: 127.0.0.1
+      failed_when: pkg_files.matched == 0
+
+    - name: get the package name
+      tags: conf
+      shell: echo "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+      register: pkg_file_name
+      delegate_to: 127.0.0.1
+      changed_when: False
+
+    - debug: msg="package = {{ pkg_file_name.stdout }}"
+      tags: conf
+      delegate_to: 127.0.0.1
+
+    - name: sync dmbin package
+      tags: conf
+      copy: src={{ pkg_file_name.stdout }} dest={{ remote_pkgs_library }}
+
+    - name: tar package
+      tags: conf
+      vars:
+        - src_pkg_full_path: "{{ remote_pkgs_library }}/{{ pkg_file_name.stdout | basename }}"
+      shell: >
+        cd {{ datamaster_home }}
+        && pkg_name=`tar -tzf {{ src_pkg_full_path }} | head -1 | cut -d "/" -f 1`
+        && rm -rf ${pkg_name}
+        && tar -xvf {{ src_pkg_full_path }}
+        warn=no
+
+    - name: check datamaster status
+      tags: conf
+      clueserv: name=datamaster path={{ datamaster_home }} state=status
+      register: servstat
+      when: confstat.changed
+
+    - name: notify restart
+      shell: echo "config changed, restart datamaster ..."
+      tags: conf
+      when:
+        - confstat.changed
+        - servstat.status == "started"
+      notify:
+        - restart datamaster
+    #- name: remove conf
+      #tags: conf
+      #shell: rm -rf /opt/apache-tomcat

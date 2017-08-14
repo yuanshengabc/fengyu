@@ -1,0 +1,12 @@
+---
+- name: check nginx status
+  tags: status
+  #clueserv: name=nginx path={{ nginx_home }} state=status
+  sudo: yes
+  shell: systemctl status nginx&warn=no
+  #shell: service nginx status
+  register: nginx_status
+
+- debug: msg={{ nginx_status.stdout_lines }}
+  tags: status
+  when: nginx_status is defined

@@ -1,0 +1,34 @@
+---
+
+- name: start mesos master
+  tags: start,start_master
+  clueserv: name=mesos path={{ mesos_home }} state=started arg="-m master"
+  when:
+    - is_mesos_master is defined
+    - is_mesos_master
+  async: 120 
+  poll: 1
+
+- name: start mesos slave
+  tags: start,start_slave
+  clueserv: name=mesos path={{ mesos_home }} state=started arg="-m slave"
+  async: 120 
+  poll: 1
+
+- name: check cluster status
+  tags: check
+  uri:
+    url: "http://{{ mesos_master_ip }}:{{ mesos_master_port }}/state.json"
+    return_content: yes
+  register: start_status
+  until:
+    - start_status.failed is undefined or (start_status.failed == false)
+    - (start_status.content | from_json).activated_slaves == (groups['mesos'] | length)
+  retries: 5
+  delay: 3
+  run_once: True
+  #failed_when: False
+  #changed_when: False
+
+  #- debug: msg={{ start_status }}
+  #  tags: check

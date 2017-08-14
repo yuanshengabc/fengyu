@@ -1,0 +1,39 @@
+---
+
+
+hdfs_cluster_name: xinghe    #集群名称
+hdfs_listen_ip: "{{ default_listen_ip }}"   ##监听ip
+
+hdfs_package: hadoop-2.7              #安装包名称 使用开始字符串匹配 格式为tar.gz
+
+hdfs_install_root: "{{ components_library }}"             ##安装根目录
+hadoop_home: "{{hdfs_install_root}}/hadoop"                 #hadoop home 目录
+hdfs_home: "{{hadoop_home}}"                                #hdfs home 目录
+hdfs_conf_path: "{{hdfs_home}}/etc/hadoop"                  #配置文件路径
+hdfs_log_pid_path: /data/datamaster/hadoop                             #log pid 路径
+hdfs_namenode_data_path:
+  - /data01/datamaster/dfs/nn
+  - /data02/datamaster/dfs/nn
+
+hdfs_namenode_data_path_file_temp: "{% for v in hdfs_namenode_data_path %} file://{{v}},{% endfor %}"
+hdfs_namenode_data_path_file: "{{ hdfs_namenode_data_path_file_temp | regex_replace(',$','') }}"
+estransport_ip: "{% for h in groups['es'] %}{%- if (hostvars[h].is_transport is defined and hostvars[h].is_transport) %}{{ hostvars[h]['ansible_default_ipv4']['address']}}{% endif %}{% endfor %}"
+hdfs_datanode_data_path:
+  - /data07/datamaster/dfs/dn
+  - /data06/datamaster/dfs/dn
+  - /data05/datamaster/dfs/dn
+  - /data04/datamaster/dfs/dn
+  - /data03/datamaster/dfs/dn
+  - /data02/datamaster/dfs/dn
+  - /data01/datamaster/dfs/dn
+
+hdfs_datanode_data_path_file_temp: "{% for v in hdfs_datanode_data_path %} file://{{v}},{% endfor %}"
+hdfs_datanode_data_path_file: "{{ hdfs_datanode_data_path_file_temp | regex_replace(',$','') }}"
+hdfs_namenode_host: "{% for h in groups['hdfs'] %}{%- if (hostvars[h].is_namenode is defined and hostvars[h].is_namenode) %}{{ hostvars[h]['ansible_default_ipv4']['address']}}{% endif %}{% endfor %}"
+hdfs_datanode_hosts_temp: "{% for h in groups['hdfs'] %}{%- if (hostvars[h].is_datanode is defined and hostvars[h].is_datanode) %}{{ hostvars[h]['ansible_default_ipv4']['address']}},{% endif %}{% endfor %}"
+hdfs_datanode_hosts: "{{ hdfs_datanode_hosts_temp | regex_replace(',$','') }}"
+dfs_http_address: "{{hdfs_namenode_host}}:50070"
+hdfs_secondary_host: "{% for h in groups['hdfs'] %}{%- if (hostvars[h].is_secondary is defined and hostvars[h].is_secondary) %}{{ hostvars[h]['ansible_default_ipv4']['address']}}{% endif %}{% endfor %}"
+dfs_secondary_http_address: "{{hdfs_secondary_host}}:50090"
+yarn_resource_host: "{{hdfs_namenode_host}}"
+jobhistory_host: "{% for h in groups['hdfs'] %}{%- if (hostvars[h].is_jobhistory is defined and hostvars[h].is_jobhistory) %}{{ hostvars[h]['ansible_default_ipv4']['address']}}{% endif %}{% endfor %}"

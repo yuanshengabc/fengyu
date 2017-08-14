@@ -1,0 +1,10 @@
+---
+
+- name: get zookeeper node status
+  tags: status
+  clueserv: name=zookeeper path={{ zookeeper_home }} state=status
+  register: node_status
+
+- debug: msg={{ node_status }}
+  tags: status
+

@@ -1,0 +1,17 @@
+<included>
+    <appender name="app"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${LOG_PATH}/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/app.log.%i</fileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy
+                class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+</included>

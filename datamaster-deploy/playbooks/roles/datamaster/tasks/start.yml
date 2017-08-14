@@ -1,0 +1,7 @@
+---
+  - block:
+    - name: start datamaster
+      tags: start
+      clueserv: name=datamaster path={{ datamaster_home }} state=started
+      async: 120
+      poll: 1

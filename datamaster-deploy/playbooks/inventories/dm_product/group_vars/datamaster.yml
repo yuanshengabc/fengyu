@@ -1,0 +1,19 @@
+---
+#magneto_install_root: /opt
+#magneto_home: "{{magneto_install_root}}/magneto"
+
+datamaster_install_root: "{{work_root_dir}}"
+
+datamaster_home: "{{datamaster_install_root}}/datamaster"    #程序home路径
+datamaster_conf_dir: "{{datamaster_home}}/conf"    #配置文件路径
+datamaster_bin_dir: "{{datamaster_home}}/bin"    #脚本文件路径
+dmbin_package: dmbin.tar.gz                      #脚本包名称
+sparklibs_package: sparklibs.tar.gz
+
+
+active: dev                                 #运行模式
+jar_path: "{{datamaster_home}}/libs"                      #jar 存放位置
+datamaster_path_logs: /data/datamaster/log  #log文件
+datamaster_logs: "{{datamaster_path_logs}}/cleaner-start.log"  #重定向日志路径
+datamaster_package: datamaster.tar.gz    #安装包名称 使用开始字符串匹配 格式为tar.gz
+jar_version: cleaner-0.1.0-SNAPSHOT.jar

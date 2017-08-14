@@ -1,0 +1,48 @@
+[expect]
+
+[expect:children]
+mysql
+
+[initsys]
+lc17
+
+[confluent]
+lc17
+[zookeeper]
+lc17
+[zookeeper:children]
+confluent
+[mysql]
+lc17
+
+[nginx]
+lc17
+[nginx:children]
+datamasterweb
+
+[java]
+lc17
+
+[es]
+lc17 is_transport=1
+
+[datamaster]
+lc17 is_datamaster=1
+
+[datamasterweb]
+lc17 is_datamasterweb=1
+
+[datamaster:children]
+confluent
+es
+mysql
+[hdfs]
+lc17 is_namenode=1 is_jobhistory=1 is_datanode=1 is_secondary=1
+[sqoop]
+lc17
+[mesos]
+lc17 is_mesos_master=1  #是否是master
+[spark]
+
+[spark:children]
+mesos

@@ -1,0 +1,5 @@
+---
+
+- name: stop datanode
+  tags: stop
+  clueserv: name=hdfs path={{ hdfs_home }} state=stopped arg='datanode'

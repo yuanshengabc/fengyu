@@ -1,0 +1,16 @@
+---
+
+confluent_listen_ip: "{{ default_listen_ip }}" #监听ip
+
+confluent_package: confluent-3.0.0       #安装包名称 使用开始字符串匹配 格式为tar.gz
+
+confluent_install_root: "{{work_root_dir}}/deepclue/"     ##安装根目录
+confluent_data_root: /data/deepclue/confluent   # 数据根目录
+confluent_zookeeper_tmp: "{% for h in groups['confluent'] %}
+                          {{ hostvars[h]['ansible_default_ipv4']['address'] }}:{{ zk_client_port}},
+                        {% endfor %}"
+confluent_zookeeper: "{{ confluent_zookeeper_tmp | regex_replace('[ ]*,[ ]*', ',') | regex_replace(',$', '') }}"    #种子节点ip格式 “<ip1>,<ip2>”
+
+#confluent_ips: "{{ groups['confluent'] | map('extract', hostvars, ['ansible_default_ipv4', 'address'])| list}}"  #所有节点ip 格式 [<ip1>,<ip2>]
+confluent_ip: "{% for h in groups['confluent'] %}{{ hostvars[h]['ansible_default_ipv4']['address']}},{% endfor %}" # confluent ip 目前一般只有一个如果以后有多个需要修改格式
+confluent_home: "{{confluent_install_root}}/confluent"   #confluent 程序目录

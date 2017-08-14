@@ -1,0 +1,5 @@
+mysql_package: mysql
+mysql_home: "{{ components_library }}/mysql"
+character_set_server: utf8
+max_allowed_packet: 1024M
+sql_package: initsql.tar.gz

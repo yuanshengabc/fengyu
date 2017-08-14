@@ -1,0 +1,10 @@
+---
+
+- include: stop.yml
+- include: danger.yml
+- include: clear.yml
+- include: install.yml
+- include: conf.yml
+- include: start.yml
+- include: status.yml
+- include: trigger_restart.yml

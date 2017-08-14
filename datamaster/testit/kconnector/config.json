@@ -1,0 +1,1 @@
+{"kafkaBinPath":"/opt/confluent/bin/connect-standalone","workerPath":"/opt/confluent/etc/schema-registry/connect-avro-standalone.properties","dbPath":"jdbc:sqlite:/opt/deepclue/datamaster/connect/test.db"}

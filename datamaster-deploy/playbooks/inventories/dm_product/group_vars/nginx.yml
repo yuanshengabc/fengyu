@@ -1,0 +1,6 @@
+nginx_package: nginx              #nginx安装包名称 使用开始字符串匹配 格式为tar.gz  这里是把需要的 yum 文件打包成gz
+nginx_home: "{{ components_library }}/nginx"            # nginx home 路径用于是yum安装所有不是真正的程序目录，只放置使用python 写的起停控制脚本
+access_log_path: /data/datamaster/nginx  #日志存放路径
+access_log: cleaner.log           #日志文件名称
+nginx_web_dir: "{{work_root_dir}}/datamaster"    #配置conf.d文件用
+dist_package: www                 #配置conf.d文件用

@@ -1,0 +1,5 @@
+---
+
+- name: restart nginx
+  include: restart.yml
+  listen: "restart all"

@@ -1,0 +1,38 @@
+# The number of milliseconds of each tick
+tickTime=2000
+# The number of ticks that the initial 
+# synchronization phase can take
+initLimit=10
+# The number of ticks that can pass between 
+# sending a request and getting an acknowledgement
+syncLimit=5
+# the directory where the snapshot is stored.
+# do not use /tmp for storage, /tmp here is just 
+# example sakes.
+dataDir=/tmp/zookeeper
+# the port at which the clients will connect
+clientPort=2181
+# the maximum number of client connections.
+# increase this if you need to handle more clients
+#maxClientCnxns=60
+#
+# Be sure to read the maintenance section of the 
+# administrator guide before turning on autopurge.
+#
+# http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_maintenance
+#
+# The number of snapshots to retain in dataDir
+#autopurge.snapRetainCount=3
+# Purge task interval in hours
+# Set to "0" to disable auto purge feature
+#autopurge.purgeInterval=1
+
+dataDir={{ zookeeper_data_root }}
+# the port at which the clients will connect
+clientPort={{ zookeeper_client_port }}
+# disable the per-ip limit on the number of connections since this is a non-production config
+maxClientCnxns=0
+initLimit=10
+syncLimit=5
+{% for h in groups['zookeeper'] %}
+server.{{ hostvars[h]['ansible_default_ipv4']['address']|replace('.','')|int()%100}}={{ hostvars[h]['ansible_default_ipv4']['address']}}:12888:13888{{'\n'}}{% endfor %}

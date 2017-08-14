@@ -1,0 +1,59 @@
+---
+
+- name: get hdfs node status
+  tags: status
+  clueserv: name=hdfs path={{ hdfs_home }} state=status
+  register: node_status
+
+- debug: msg={{ node_status }}
+  tags: status
+
+- name: get hdfs NameNodeInfo status
+  tags: status
+  uri:
+    url: "http://{{dfs_http_address}}/jmx?qry=Hadoop:service=NameNode,name=NameNodeInfo"
+    return_content: yes
+  register: namenodeinfo
+  run_once: True
+
+- debug: msg={{ namenodeinfo.content }}
+  tags: status
+  run_once: True
+
+- name: get hdfs NameNodeStatus status
+  tags: status
+  uri:
+    url: "http://{{dfs_http_address}}/jmx?qry=Hadoop:service=NameNode,name=NameNodeStatus"
+    return_content: yes
+  register: NameNodeStatus
+  run_once: True
+
+- debug: msg={{ NameNodeStatus.content }}
+  tags: status
+  run_once: True
+
+- name: get hdfs FSNamesystemState status
+  tags: status
+  uri:
+    url: "http://{{dfs_http_address}}/jmx?qry=Hadoop:service=NameNode,name=FSNamesystemState"
+    return_content: yes
+  register: FSNamesystemState
+  run_once: True
+
+- debug: msg={{ FSNamesystemState.content }}
+  tags: status
+  run_once: True
+
+- name: get hdfs Memory status
+  tags: status
+  uri:
+    url: "http://{{dfs_http_address}}/jmx?qry=java.lang:type=Memory"
+    return_content: yes
+  register: Memory
+  run_once: True
+
+- debug: msg={{ Memory.content }}
+  tags: status
+  run_once: True
+ 
+

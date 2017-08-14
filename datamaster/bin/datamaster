@@ -1,0 +1,94 @@
+#!/bin/bash
+commandd=$1
+parameter=$2
+confpath=$3
+
+basedir=$(dirname "$0")
+export BINPATH=$basedir
+export DMPATH=${basedir}/..
+export DMWEBPATH=${basedir}/../../datamaster-web
+
+case $1 in
+startweb)
+	${BINPATH}/sys/dmstartweb.sh;;
+stop)
+	${BINPATH}/sys/dmstopjar.sh;;
+build)
+	if [ ! $2 ];then
+		echo "please input dev, beta, local ..."
+	else
+		${BINPATH}/sys/dmbuildjar.sh $2
+	fi;;
+buildweb)
+	${BINPATH}/sys/dmbuildweb.sh;;
+
+installall)
+	${BINPATH}/environment/dminstallall.sh;;
+installmysql)
+	${BINPATH}/environment/dminstallmysql.sh;;
+installes)
+	${BINPATH}/environment/dminstalles.sh;;
+installcp)
+	${BINPATH}/environment/dminstallcp.sh;;
+installng)
+	${BINPATH}/environment/dminstallng.sh;;
+
+startall)
+	${BINPATH}/environment/dmstartall.sh;;
+startes)
+	${BINPATH}/environment/dmstartes.sh;;
+startcp)
+	${BINPATH}/environment/dmstartcp.sh;;
+startng)
+	${BINPATH}/environment/dmstartng.sh;;
+
+# Start mesos master and slave
+startms)
+    ${BINPATH}/environment/dmstartmslave.sh $2;;
+startmm)
+    ${BINPATH}/environment/dmstartmmaster.sh $2;;
+
+stopall)
+	${BINPATH}/environment/dmstopall.sh;;
+stopcp)
+	${BINPATH}/environment/dmstopcp.sh;;
+stopes)
+	${BINPATH}/environment/dmstopes.sh;;
+stopng)
+	${BINPATH}/environment/dmstopng.sh;;
+
+init)
+	${BINPATH}/environment/dminitmysql.sh
+	${BINPATH}/environment/dminites.sh;;
+initmysql)
+	${BINPATH}/environment/dminitmysql.sh;;
+inites)
+	${BINPATH}/environment/dminites.sh;;
+
+esstat)
+	${BINPATH}/environment/dmesstat.sh $2;;
+
+start)
+	lc=`ps -ef | grep cleaner- | wc -l`
+
+	if [ ! $2 ];then
+		if  [ $lc -gt 1 ];then
+		    	echo "datamaster has been started"
+		else
+		    nohup java -jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 ${DMPATH}/genlibs/cleaner-*.jar --spring.profiles.active=dev > /data/datamaster/log/cleaner-start.log &
+		    echo now starting dev,the log is /data/datamaster/log/cleaner-start.log
+		fi
+	else
+		if  [ $lc -gt 1 ];then
+		    	echo "datamaster has been started"
+		else
+		    nohup java -jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 ${DMPATH}/genlibs/cleaner-*.jar --spring.profiles.active=$2 > /data/datamaster/log/cleaner-start.log &
+		    echo now starting $2,the log is /data/datamaster/log/cleaner-start.log
+		fi
+	fi;;
+'')
+	echo "You should input keyword!";;
+
+*)
+	echo "Sorry,you input wrong keyword~";;
+esac

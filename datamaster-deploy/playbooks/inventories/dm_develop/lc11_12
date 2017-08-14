@@ -1,0 +1,71 @@
+
+[init]
+172.24.8.111
+172.24.8.112
+
+[hadoop]
+172.24.8.111 is_namenode1=1 is_datanode=1 is_rm1=1 is_nm=1 is_journalnode=1
+172.24.8.112 is_namenode2=1 is_datanode=1 is_rm2=1 is_nm=1 is_journalnode=1
+
+[confluent]
+172.24.8.111
+172.24.8.112
+
+[zookeeper]
+172.24.8.111 is_zk=1
+172.24.8.112 is_zk=1
+
+[zookeeper:children]
+confluent
+hadoop
+
+[mysql]
+172.24.8.111
+
+[expect]
+[expect:children]
+mysql
+
+[datamasterweb]
+172.24.8.111
+[nginx]
+172.24.8.111
+
+[nginx:children]
+datamasterweb
+
+[java]
+172.24.8.111
+172.24.8.112
+
+
+[es]
+172.24.8.111 is_transport=1 #是否是transport
+172.24.8.112
+
+
+[sqoop]
+172.24.8.111
+
+
+[mesos]
+172.24.8.111 is_mesos_master=1  #是否是master
+
+
+[spark]
+
+[spark:children]
+mesos
+
+[datamaster]
+172.24.8.111 is_datamaster=1   #是否是真的datamaster
+
+[datamaster:children]
+confluent
+es
+mysql
+
+[hdfs]
+172.24.8.111 is_namenode=1 is_jobhistory=1 is_datanode=1
+172.24.8.112 is_secondary=1 is_datanode=1
+

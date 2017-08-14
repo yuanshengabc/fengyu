@@ -1,0 +1,2 @@
+{% for h in groups['hdfs'] %}{{hostvars[h]['ansible_default_ipv4']['address']}}{{'\n'}}{% endfor %}
+

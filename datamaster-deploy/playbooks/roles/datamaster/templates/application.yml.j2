@@ -1,0 +1,59 @@
+spring:
+  profiles:
+    # active env
+    active: {{active}}
+  datasource:
+    schema: classpath:sql/schema.sql
+    initialize: true
+    continue-on-error: true
+    name: datamaster
+    # mysql username
+    username: {{ groups['mysql'] | map('extract', hostvars, ['mysql_user']) | list | first}}
+    # Mysql password
+    password: {{ groups['mysql'] | map('extract', hostvars, ['mysql_root_pass']) | list | first}}
+    # Mysql connection url
+    url: jdbc:mysql://{{ groups['mysql'] | map('extract', hostvars, ['mysql_listen_ip']) | list | first}}/datamaster?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false
+    driver-class-name: com.mysql.jdbc.Driver
+    sql-script-encoding: UTF-8
+    tomcat:
+      max-active: 20
+      max-idle: 20
+      max-wait: 60000
+      min-idle: 1
+  aop:
+    auto: true
+    proxy-target-class: true
+logging:
+    path: log/datamaster/
+    level:
+         root: info
+    config: classpath:logback-spring.xml
+server:
+  context-path: /cleaner
+  port: 7776
+  tomcat:
+    uri-encoding: utf-8
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+esconfig:
+ clusterName:  {{ groups['es'] | map('extract', hostvars, ['es_cluster_name']) | list | first}}
+ # ES ip
+ clusterIp: {{ groups['es'] | map('extract', hostvars, ['es_listen_ip']) | list | first}}
+ shardsNum: 5
+ replicasNum: 1
+
+kafkaConfig:
+  # Kafka broker server ip
+  brokerServer: {{ groups['confluent'] | map('extract', hostvars, ['confluent_listen_ip']) | list | first}}
+  # Kafka zookeeper server ip
+  zkServer: {{ groups['confluent'] | map('extract', hostvars, ['confluent_listen_ip']) | list | first}}
+  # Kafka schema registry server ip
+  schemaRegServer: {{ groups['confluent'] | map('extract', hostvars, ['confluent_listen_ip']) | list | first}}
+
+hdfsConfig:
+  server: {{ hdfs_namenode_host }}
+  port: 9000
+  username: {{ root_dirs_owner }}

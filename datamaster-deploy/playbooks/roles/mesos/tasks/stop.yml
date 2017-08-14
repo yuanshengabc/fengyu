@@ -1,0 +1,12 @@
+---
+
+- name: stop mesos slave
+  tags: stop,stop_slave
+  clueserv: name=mesos path={{ mesos_home }} state=stopped arg="-m slave"
+
+- name: stop mesos master
+  tags: stop,stop_master
+  clueserv: name=mesos path={{ mesos_home }} state=stopped arg="-m master"
+  when:
+    - is_mesos_master is defined
+    - is_mesos_master

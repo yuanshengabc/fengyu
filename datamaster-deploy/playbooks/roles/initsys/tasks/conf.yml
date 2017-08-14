@@ -1,0 +1,120 @@
+---
+  - name: set ntpd firewalld
+    tags: conf
+    sudo: yes
+    shell: |
+       systemctl start
+       systemctl enable ntpd
+       systemctl stop firewalld
+       systemctl disable firewalld
+
+  - name: memlock unlimited
+    tags: conf
+    sudo: yes
+    lineinfile:
+      line: "* - memlock unlimited"
+      dest: /etc/security/limits.conf
+      regexp: ".*memlock unlimited.*"
+      insertbefore: "^[ \t]*#.*magneto:END"
+
+  - name: nofile 1048576
+    tags: conf
+    sudo: yes
+    lineinfile:
+      line: "* - nofile 1048576"
+      dest: /etc/security/limits.conf
+      regexp: ".*nofile 1048576.*"
+      insertbefore: "^[ \t]*#.*magneto:END"
+
+  - name: nproc 999999
+    tags: conf
+    sudo: yes
+    lineinfile:
+      line: "* - nproc 999999"
+      dest: /etc/security/limits.conf
+      regexp: ".*nproc 999999.*"
+      insertbefore: "^[ \t]*#.*magneto:END"
+
+  - name: as unlimited
+    tags: conf
+    sudo: yes
+    lineinfile:
+      line: "* - as unlimited"
+      dest: /etc/security/limits.conf
+      regexp: ".*as unlimited.*"
+      insertbefore: "^[ \t]*#.*magneto:END"
+
+  - name: fsize unlimited
+    tags: conf
+    sudo: yes
+    lineinfile:
+      line: "* - fsize unlimited"
+      dest: /etc/security/limits.conf
+      regexp: ".*fsize unlimited.*"
+      insertbefore: "^[ \t]*#.*magneto:END"
+
+  - name: nproc 999999
+    tags: conf
+    sudo: yes
+    lineinfile:
+      line: "* - nproc 999999"
+      dest: /etc/security/limits.d/90-nproc.conf
+      regexp: ".*nproc 999999.*"
+      insertbefore: "^[ \t]*#.*magneto:END"
+
+
+  - name: vm.max_map_count = 16777216
+    tags: conf
+    sudo: yes
+    lineinfile:
+      line: "vm.max_map_count = 16777216"
+      dest: /etc/sysctl.conf
+      regexp: ".*vm.max_map_count.*"
+      insertbefore: "^[ \t]*#.*magneto:END"
+
+  - name: vm.overcommit_memory = 1
+    tags: conf
+    sudo: yes
+    lineinfile:
+      line: "vm.overcommit_memory = 1"
+      dest: /etc/sysctl.conf
+      regexp: ".*vm.overcommit_memory.*"
+      insertbefore: "^[ \t]*#.*magneto:END"
+
+  - name: net.core.somaxconn = 1024
+    tags: conf
+    sudo: yes
+    lineinfile:
+      line: "net.core.somaxconn = 1024"
+      dest: /etc/sysctl.conf
+      regexp: ".*net.core.somaxconn.*"
+      insertbefore: "^[ \t]*#.*magneto:END"
+
+  - name: run set sysctl -p and cpupower frequency-set --governor performance
+    tags: conf
+    sudo: yes
+    shell: |
+     sysctl -p
+     cpupower frequency-set --governor performance
+
+  - name: cpupower frequency-set --governor performance
+    tags: conf
+    sudo: yes
+    lineinfile:
+      line: "cpupower frequency-set --governor performance"
+      dest: /etc/rc.local
+      regexp: ".*cpupower.*"
+      insertbefore: "^[ \t]*#.*magneto:END"
+
+  - name: echo never > /sys/kernel/mm/transparent_hugepage/enabled
+    tags: conf
+    sudo: yes
+    lineinfile:
+      line: "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
+      dest: /etc/rc.local
+      regexp: ".*hugepage.*"
+      insertbefore: "^[ \t]*#.*magneto:END"
+  - name: chmod +x /etc/rc.d/rc.local
+    tags: conf
+    sudo: yes
+    shell: chmod +x /etc/rc.d/rc.local

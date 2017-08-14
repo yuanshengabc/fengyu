@@ -1,0 +1,20 @@
+group 'cn.deepclue.datamaster'
+version "$version"
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':libraries:cleaning')
+    compile project(':libraries:fusion')
+    compile group: 'org.quartz-scheduler', name: 'quartz', version: '2.2.1'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
+    compile group: 'mysql', name: 'mysql-connector-java', version: "$mysqlDriverVersion"
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+}

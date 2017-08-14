@@ -1,0 +1,8 @@
+---
+
+- name: start nginx
+  tags: start
+  sudo: yes
+  clueserv: name=nginx path={{ nginx_home }} state=started
+  async: 120
+  poll: 1

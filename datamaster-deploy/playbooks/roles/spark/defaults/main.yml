@@ -1,0 +1,18 @@
+---
+
+spark_install_root: "{{ components_library }}"
+spark_data_root: /data/datamaster/spark
+
+spark_home: "{{ spark_install_root }}/spark"
+
+spark_path_log: "{{ spark_data_root }}/logs"
+spark_path_run: "{{ spark_data_root }}/run"
+
+spark_parallelism: "{{ groups['spark'] | map('extract', hostvars, ['ansible_processor_vcpus']) | list | sum * 2 }}"
+
+# mesos info's
+mesos_home: "{{ groups['mesos'] | map('extract', hostvars, ['mesos_install_root']) | list | first | trim }}"
+mesos_master_ip: "{{ groups['mesos'] | map('extract', hostvars, ['mesos_master_ip']) | list | first | trim }}"
+mesos_master_port: "{{ groups['mesos'] | map('extract', hostvars, ['mesos_master_port']) | list | first | trim }}"
+
+

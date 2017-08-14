@@ -1,0 +1,6 @@
+---
+
+- name: restart confluent
+  include: restart.yml
+  listen: "restart all"
+  

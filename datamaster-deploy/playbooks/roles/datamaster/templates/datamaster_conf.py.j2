@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+#
+
+
+datamaster_pattern = "cleaner-"
+#datamaster_start_code = "java -jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 {{ jar_path }}/*.jar --spring.config.location={{datamaster_conf_dir}}/application.yml --spring.profiles.active={{active}} -Dorg.quartz.properties={{datamaster_conf_dir}}/quartz.properties"
+datamaster_start_code = "java -Dorg.quartz.properties={{datamaster_conf_dir}}/quartz.properties -jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 {{ jar_path }}/*.jar --spring.config.location={{datamaster_conf_dir}}/application.yml" 
+path_logs ="{{datamaster_logs}}"

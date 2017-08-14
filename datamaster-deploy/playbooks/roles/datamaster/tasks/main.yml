@@ -1,0 +1,42 @@
+---
+
+- include: danger.yml
+  static: no
+  when:
+    - is_datamaster is defined
+    - is_datamaster
+- include: stop.yml
+  static: no
+  when:
+    - is_datamaster is defined
+    - is_datamaster
+- include: clear.yml
+  static: no
+  when:
+    - is_datamaster is defined
+    - is_datamaster
+- include: install.yml
+  static: no
+  when:
+    - is_datamaster is defined
+    - is_datamaster
+- include: conf.yml
+  static: no
+  when:
+    - is_datamaster is defined
+    - is_datamaster
+- include: start.yml
+  static: no
+  when:
+    - is_datamaster is defined
+    - is_datamaster
+- include: status.yml
+  static: no
+  when:
+    - is_datamaster is defined
+    - is_datamaster
+- include: trigger_restart.yml
+  static: no
+  when:
+    - is_datamaster is defined
+    - is_datamaster

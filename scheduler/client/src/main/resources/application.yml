@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: scheduler-client
+  profiles:
+    # active env
+    active: dev
+logging:
+    path: /data/scheduler/log
+    level:
+         root: info
+    config: classpath:logback-spring.xml
+server:
+  context-path: /client
+  port: 7779
+  tomcat:
+    uri-encoding: utf-8

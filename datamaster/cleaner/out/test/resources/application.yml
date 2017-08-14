@@ -1,0 +1,50 @@
+spring:
+  profiles:
+      active: dev
+  datasource:
+    name: datamaster
+    username: root
+    password: data123!@#
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://172.24.8.115/datamaster?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=true
+    tomcat:
+      max-active: 20
+      max-idle: 20
+      max-wait: 60000
+      min-idle: 1
+
+logging:
+    path: /data/datamaster/log
+    level:
+         root: info
+    config: classpath:logback-spring.xml
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+---
+spring:
+  profiles: dev
+esconfig:
+ clusterName: datamaster
+ clusterIp: 172.24.8.115
+ shardsNum: 5
+ replicasNum: 1
+
+---
+spring:
+  profiles: beta
+esconfig:
+ clusterName: datamaster
+ clusterIp: 172.24.8.115
+ shardsNum: 5
+ replicasNum: 1
+
+---
+spring:
+  profiles: prod
+esconfig:
+ clusterName: datamaster
+ clusterIp: 172.24.8.115
+ shardsNum: 5
+ replicasNum: 1

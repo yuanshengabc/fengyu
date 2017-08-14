@@ -1,0 +1,17 @@
+<included>
+    <appender name="deepclue-spring-boot-sample"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${LOG_PATH}/deepclue-spring-boot-sample.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/deepclue-spring-boot-sample.log.%i</fileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy
+                class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+</included>

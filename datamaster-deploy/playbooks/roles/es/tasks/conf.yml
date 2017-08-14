@@ -1,0 +1,35 @@
+---
+
+- name: config es
+  tags: conf
+  template: src={{ item.tmpl }} dest={{ es_home }}/config/{{ item.dst }}
+  with_items:
+    - { tmpl: elasticsearch.yml.j2, dst: elasticsearch.yml }
+    - { tmpl: logging.yml.j2, dst: logging.yml }
+  register: confstat
+
+- name: config control
+  tags: conf
+  template: src={{ item.tmpl }} dest={{ es_home }}/control/{{ item.dst }}
+  with_items:
+    - { tmpl: control_conf.py.j2, dst: control_conf.py }
+
+- name: check service status
+  tags: conf
+  clueserv: name=es path={{ es_home }} state=status
+  register: servstat
+  when: confstat.changed
+
+  #- debug: msg="{{ servstat.status }}"
+  #  tags: conf
+  #  when: confstat.changed
+
+- name: notify restart
+  shell: echo "config changed, restart service ..."
+  tags: conf
+  when:
+    - confstat.changed
+    - servstat.status == "started"
+  notify:
+    - restart es
+

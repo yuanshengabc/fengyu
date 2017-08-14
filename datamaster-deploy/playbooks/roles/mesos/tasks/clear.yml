@@ -1,0 +1,11 @@
+---
+
+- name: clear datas
+  tags: danger,clear
+  shell: rm -r {{ item }}/*
+  register: clearstat
+  with_items:
+    - "{{ mesos_path_work }}"
+  changed_when: clearstat.rc == 0
+  failed_when: False
+

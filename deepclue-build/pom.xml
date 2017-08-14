@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>cn.deepclue</groupId>
+	<artifactId>deepclue-parent</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>deepclue-parent</name>
+	<description>deepclue common projects</description>
+	<url>http://172.24.65.100/deepclue/deepclue-build</url>
+
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<spring-boot-dependencies.version>1.5.4.RELEASE</spring-boot-dependencies.version>
+		<jackson.version>2.8.9</jackson.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven-source-plugin.version>3.0.1</maven-source-plugin.version>
+		<maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
+		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+		<nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
+	</properties>
+
+	<modules>
+		<module>deepclue-common</module>
+		<module>deepclue-spring-boot-starters</module>
+		<module>deepclue-spring-boot-sample</module>
+	</modules>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot-dependencies.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<distributionManagement>
+		<repository>
+			<id>nexus-releases</id>
+			<name>Nexus Releases Repository</name>
+			<url>http://172.24.65.100:8081/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<name>Nexus Snapshots Repository</name>
+			<url>http://172.24.65.100:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+</project>

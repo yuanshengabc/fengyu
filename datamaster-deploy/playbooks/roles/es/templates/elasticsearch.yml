@@ -1,0 +1,28 @@
+cluster.name: test_yuzc
+node.name: dell12
+
+path.data: /data07/elasticsearch/data,/data06/elasticsearch/data,/data05/elasticsearch/data,/data04/elasticsearch/data,/data03/elasticsearch/data,/data02/elasticsearch/data,/data01/elasticsearch/data,/data/elasticsearch/data
+path.work: /data/elasticsearch/work
+path.logs: /data/elasticsearch/logs
+path.plugins: /opt/elasticsearch/plugins
+
+bootstrap.mlockall: true
+
+discovery.zen.ping.multicast.enabled: false
+discovery.zen.ping.unicast.hosts: 172.24.63.28,172.24.63.29,172.24.63.30,172.24.63.31,172.24.63.32
+network.host: "172.24.63.32"
+
+discovery.zen.minimum_master_nodes: 3
+
+transport.tcp.compress: true
+
+#action.disable_delete_all_indices: true
+
+gateway.recover_after_nodes: 5
+gateway.expected_nodes: 5
+
+plugin.mandatory: delete-by-query
+index.max_result_window: 1000000
+
+script.groovy.sandbox.enabled: true
+script.search: on

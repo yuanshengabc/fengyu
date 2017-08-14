@@ -1,0 +1,49 @@
+---
+
+- name: copy init file to  nginx
+  tags: conf
+  template: src="{{ item.tmpl }}" dest="{{ nginx_home }}/control/{{ item.dst }}"
+  with_items:
+    - { tmpl: nginx_conf.py.j2, dst: nginx_conf.py }
+  register: confstat
+
+- name: conf default.conf
+  tags: conf
+  sudo: yes
+  template: src=default.conf.j2 dest=/etc/nginx/conf.d/default.conf
+
+- name: set selinux to permissive
+  tags: conf
+  sudo: yes
+  selinux: policy=targeted state=permissive
+
+- name: shutdown selinux
+  tags: conf
+  sudo: yes
+  selinux: state=disabled
+
+- name: test access_log_path
+  tags: conf
+  sudo: yes
+  file: path={{access_log_path}} mode=777 state=directory
+
+- name: copy access_log
+  tags: conf
+  copy: src=files/{{access_log}} dest={{access_log_path}}
+
+- name: check nginx status
+  tags: conf
+  service: name=nginx 
+  register: nginx_status
+
+- name: restart nginx
+  tags: conf
+  shell: echo "restart nginx"
+  when: nginx_status.status.SubState == 'running'
+  notify:
+    - restart nginx
+
+- name: enable nginx
+  tags: conf
+  sudo: yes
+  shell: systemctl enable nginx.service

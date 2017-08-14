@@ -1,0 +1,14 @@
+---
+- include: initsys.yml
+- include: java.yml
+- include: expect.yml
+- include: es.yml
+- include: confluent.yml
+- include: nginx.yml
+- include: mysql.yml
+- include: mesos.yml
+- include: spark.yml
+- include: hdfs.yml
+- include: sqoop.yml
+- include: datamaster.yml
+- include: datamasterweb.yml

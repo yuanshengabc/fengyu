@@ -1,0 +1,19 @@
+# This file contains environment variables that are passed to mesos-agent.
+# To get a description of all options run mesos-agent --help; any option
+# supported as a command-line option is also supported as an environment
+# variable.
+
+# You must at least set MESOS_master.
+
+# The mesos master URL to contact. Should be host:port for
+# non-ZooKeeper based masters, otherwise a zk:// or file:// URL.
+export MESOS_master="{{ mesos_master_ip }}:{{ mesos_master_port }}"
+
+# Other options you're likely to want to set:
+export MESOS_work_dir="{{ mesos_path_work }}"
+export MESOS_log_dir="{{ mesos_path_log }}"
+# export MESOS_isolation=cgroups
+export MESOS_gc_delay=2weeks
+export MESOS_disk_watch_interval=60mins
+export MESOS_systemd_enable_support=0
+export MESOS_quiet=1

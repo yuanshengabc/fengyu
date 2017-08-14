@@ -1,0 +1,75 @@
+---
+
+- block:
+#  - name: check package list
+#    tags: install,find_package
+#    find: paths={{ publish_library }} use_regex=True patterns="^{{ spark_package }}"
+#    register: pkg_files
+#    delegate_to: 127.0.0.1
+#    failed_when: pkg_files.matched == 0
+#
+#  - name: get the package name
+#    tags: install,find_package
+#    vars:
+#      - pkg_file_name: "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+#    shell: echo {{ pkg_file_name }}
+#    register: pkg_file_name
+#    delegate_to: 127.0.0.1
+#    changed_when: False
+
+  - name: get the package name
+    tags: install,find_package
+    #vars:
+      #- pkg_file_name: "{{ publish_library }}/{{ spark_package }}"
+    shell: echo "{{ publish_library }}/{{ spark_package }}"
+    register: pkg_file_name
+    delegate_to: 127.0.0.1
+    changed_when: False
+
+  - debug: msg="package = {{ pkg_file_name.stdout }}"
+    tags: install,find_package
+    delegate_to: 127.0.0.1
+
+  - name: sync installation package
+    tags: install
+    copy: src={{ pkg_file_name.stdout }} dest={{ remote_pkgs_library }}/
+
+  - name: link installation package
+    tags: install
+    file: src="{{ remote_pkgs_library }}/{{ pkg_file_name.stdout | basename }}" dest={{ remote_pkgs_library }}/spark.used state=link
+
+  - name: install package
+    tags: install
+    vars:
+      - src_pkg_full_path: "{{ remote_pkgs_library }}/{{ pkg_file_name.stdout | basename }}"
+    shell: >
+      mkdir -p {{ spark_install_root }} && cd {{ spark_install_root }}
+      && pkg_name=`tar -tzf {{ src_pkg_full_path }} | head -1 | cut -d "/" -f 1`
+      && rm -rf ${pkg_name}
+      && tar -xzf {{ src_pkg_full_path }}
+      && rm -rf spark
+      && ln -s -f -T ${pkg_name} spark
+      warn=no
+
+  - name: setup data dirs
+    tags: install
+    file: path={{ item }} state=directory
+    with_items:
+      - "{{ spark_path_log }}"
+      - "{{ spark_path_run }}"
+
+  - name: set spark_home PATH in environment variable
+    tags: install,setenv
+    lineinfile:
+      line: "export SPARK_HOME={{ spark_home }}"
+      dest: "{{ '~/.bashrc' }}"
+      regexp: "^export SPARK_HOME=.*/spark."
+      insertbefore: "^[ \t]*#.*deepclue:END"
+
+  - name: set spark_bin PATH in environment variable
+    tags: install,setenv
+    lineinfile:
+      line: "export PATH=${SPARK_HOME}/bin:${PATH}"
+      dest: "{{ '~/.bashrc' }}"
+      regexp: "^export PATH=.{SPARK_HOME}/bin.*"
+      insertafter: "^export SPARK_HOME=.*"

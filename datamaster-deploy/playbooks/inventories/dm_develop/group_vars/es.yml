@@ -1,0 +1,24 @@
+---
+
+
+#dbclustername: datamaster
+es_cluster_name: datamaster    #集群名称
+#esnodes: "{{ groups['es'] | map('extract', hostvars, ['ansible_default_ipv4', 'address'])| list}}"
+es_listen_ip: "{{ default_listen_ip }}"   ##监听ip
+
+#es_package: elasticsearch-2.1.1.tar.gz
+es_package: elasticsearch-2.1              #安装包名称 使用开始字符串匹配 格式为tar.gz
+
+es_install_root: "{{ components_library }}"            ##安装根目录
+es_data_root: /data/datamaster/elasticsearch           #es数据目录
+#es transport节点ip
+estransport_ip: "{% for h in groups['es'] %}{%- if (hostvars[h].is_transport is defined and hostvars[h].is_transport) %}{{ hostvars[h]['ansible_default_ipv4']['address']}}{% endif %}{% endfor %}"
+#es_objectShardNumber: 8
+#es_fileShardNumber: 1
+#es 数据存储路径  根据机器以及实际es需求配置情况填写
+es_path_data:
+  - /data/datamaster/elasticsearch/data
+
+es_unicast_hosts: "{{ groups['es'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | list }}"  # 所有es 节点ip
+
+es_heap_size: 28g   #内存使用大小

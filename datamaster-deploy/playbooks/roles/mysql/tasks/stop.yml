@@ -1,0 +1,10 @@
+---
+
+- name: stop mysql
+  tags: stop
+  sudo: yes
+  #clueserv: name=mysql path={{ mysql_home }} state=stopped
+  shell: systemctl stop mysqld
+  #service: name=mysqld state=stopped
+  #async: 120
+  #poll: 1

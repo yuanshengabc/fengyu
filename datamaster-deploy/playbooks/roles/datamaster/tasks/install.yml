@@ -1,0 +1,87 @@
+---
+ - block:
+   - name: test datamaster_home
+     tags: install
+     file: path={{datamaster_home}} mode=775 state=directory
+
+#   - name: copy control
+#     tags: install,install_control
+#     copy: src=files/control dest="{{ datamaster_home }}"
+
+   - name: install control
+     tags: install,install_control
+     copy: src=files/control/datamaster_control.py dest="{{ datamaster_home }}/control/"
+
+   - name: test jar_path
+     tags: install
+     file: path={{jar_path}} mode=775 state=directory
+
+   - name: check package list
+     tags: install,find_package
+     find: paths={{ business_library }} use_regex=True patterns="^{{ datamaster_package}}"
+     register: pkg_files
+     delegate_to: 127.0.0.1
+     failed_when: pkg_files.matched == 0
+
+   - name: get the package name
+     tags: install,find_packge
+     #vars:
+       #- pkg_file_name: "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+     shell: echo "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+     register: pkg_file_name
+     delegate_to: 127.0.0.1
+     changed_when: False
+
+   - debug: msg="package = {{ pkg_file_name.stdout }}"
+     tags: install,find_package
+     delegate_to: 127.0.0.1
+
+   - name: sync installation package
+     tags: install
+     copy: src={{ pkg_file_name.stdout }} dest={{ remote_pkgs_library }}/
+
+   - name: install package
+     tags: install
+     vars:
+       - src_pkg_full_path: "{{ remote_pkgs_library }}/{{ pkg_file_name.stdout | basename }}"
+     shell: >
+       cd {{ jar_path }}
+       && pkg_name=`tar -tzf {{ src_pkg_full_path }} | head -1 | cut -d "/" -f 1`
+       && rm -rf ${pkg_name}
+       && tar -xvf {{ src_pkg_full_path }}
+       warn=no
+
+   - name: check sparklibs package list
+     tags: install_sparklibs, find_package
+     find: paths={{ business_library }} use_regex=True patterns="^{{ sparklibs_package}}"
+     register: splib_files
+     delegate_to: 127.0.0.1
+     failed_when: splib_files.matched == 0
+
+   - name: get the sparklibs package name
+     tags: install_sparklibs, find_package
+     #vars:
+       #- pkg_file_name: "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+     shell: echo "{{ splib_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+     register: splib_file_name
+     delegate_to: 127.0.0.1
+     changed_when: False
+
+   - debug: msg="package = {{ splib_file_name.stdout }}"
+     tags: install_sparklibs, find_package
+     delegate_to: 127.0.0.1
+
+   - name: sync package
+     tags: install_sparklibs
+     copy: src={{ splib_file_name.stdout }} dest={{ remote_pkgs_library }}
+
+   - name: install sparklibs package
+     tags: install_sparklibs
+     vars:
+       - src_pkg_full_path: "{{ remote_pkgs_library }}/{{ splib_file_name.stdout | basename }}"
+     shell: > 
+       cd {{ jar_path }}
+       && pkg_name=`tar -tzf {{ src_pkg_full_path }} | head -1 | cut -d "/" -f 1`
+       && rm -rf ${pkg_name}
+       && tar -xvf {{ src_pkg_full_path }}
+       warn=no

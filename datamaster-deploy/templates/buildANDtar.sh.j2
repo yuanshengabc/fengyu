@@ -1,0 +1,78 @@
+#!/bin/bash
+
+datamasterpath={{build_dir}}
+jarpath=$datamasterpath/genlibs
+
+datamasterwebpath={{datamaster_web_dir}}
+webpath=$datamasterwebpath/dist
+
+dmtars={{business_library}}
+
+init_sqls="$datamasterpath/cleaner/src/integTest/resources/sql/drop.sql $datamasterpath/cleaner/src/main/resources/sql/schema.sql $datamasterpath/cleaner/src/integTest/resources/sql/data.sql $datamasterpath/libraries/scheduler/src/main/resources/tables_mysql_innodb.sql"
+
+TarJar() {
+	$datamasterpath/bin/datamaster build $1
+	cd $jarpath
+	tar -zcvf datamaster.tar.gz *.jar
+	mv datamaster.tar.gz $dmtars
+}
+
+TarWww() {
+	$datamasterpath/bin/datamaster buildweb
+	cd $datamasterwebpath
+	tar -cvf datamaster-web.tar.gz dist
+	mv datamaster-web.tar.gz $dmtars
+}
+
+TarSparklibs() {
+	cd $jarpath
+	tar -cvf sparklibs.tar.gz sparklibs
+	mv sparklibs.tar.gz $dmtars
+}
+
+TarSql() {
+	cd $datamasterpath
+	git pull
+	for i in $init_sqls
+	do
+		if [ -f $i ];then
+			cp $i $dmtars
+		else
+			echo $i is not exist
+		fi
+	done
+
+	cd $dmtars
+	tar -cvf initsql.tar.gz *.sql
+	rm -f *.sql
+}
+
+TarBin() {
+	  cd $datamasterpath
+    git pull
+		tar -cvf dmbin.tar.gz bin/
+		mv dmbin.tar.gz $dmtars
+}
+
+if [ $1 = build ];then
+	TarJar $2
+elif [ $1 = buildweb ];then
+	TarWww
+elif [ $1 = all ];then
+	TarJar $2
+	TarWww
+elif [ $1 = sparklibs ];then
+	TarSparklibs
+elif [ $1 = sql ];then
+	TarSql
+elif [ $1 = bin ];then
+	TarBin
+elif [ $1 = alldm ];then
+	TarJar $2
+	TarWww
+	TarSparklibs
+	TarSql
+	TarBin
+elif [ ! $1 ];then
+	echo "You could input build, buildweb, all, sparklibs, sql, bin, or alldm."
+fi

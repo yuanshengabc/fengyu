@@ -1,0 +1,9 @@
+---
+
+- name: get datamaster node status
+  tags: status
+  clueserv: name=datamaster path={{ datamaster_home }} state=status
+  register: node_status
+
+- debug: msg={{ node_status }}
+  tags: status

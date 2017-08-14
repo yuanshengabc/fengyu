@@ -1,0 +1,35 @@
+---
+
+  - name: check init_sqls package
+    tags: init
+    find: paths={{ business_library }} use_regex=True patterns={{ sql_package }} file_type=file
+    register: pkg_files
+    delegate_to: 127.0.0.1
+    failed_when: pkg_files.matched == 0
+
+  - debug: msg="package = {{ item }}"
+    with_items:
+      - "{{ sql_init }}"
+    tags: init
+    delegate_to: 127.0.0.1
+
+  - name: copy sql
+    tags: init
+    copy: src={{ business_library }}/{{ sql_package }} dest={{remote_pkgs_library}}/
+
+  - name: tar package
+    tags: init
+    shell: >
+      cd {{ remote_pkgs_library }}
+      && tar -xvf {{ sql_package }}
+      warn=no
+
+  - name: create database datamaster
+    tags: init,initmysql
+    shell: mysql -udatamaster -p{{mysql_root_pass}}  -e"CREATE DATABASE IF NOT EXISTS datamaster;"
+
+  - name: run sql
+    tags: init,initmysql
+    shell: mysql  -udatamaster -p{{mysql_root_pass}} -Ddatamaster -e"source {{remote_pkgs_library}}/{{item}} "
+    with_items:
+      - "{{sql_init}}"

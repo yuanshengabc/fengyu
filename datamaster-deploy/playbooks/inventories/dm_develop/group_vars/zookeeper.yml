@@ -1,0 +1,13 @@
+---
+
+zookeeper_listen_ip: "{{ default_listen_ip }}" #监听ip
+
+zookeeper_package: zookeeper       #安装包名称 使用开始字符串匹配 格式为tar.gz
+
+zookeeper_install_root: "{{ components_library }}"     ##安装根目录
+zookeeper_data_root: /data/datamaster/zookeeper   # 数据根目录
+zookeeper_path_log: "{{zookeeper_data_root}}/logs"
+#confluent_ips: "{{ groups['confluent'] | map('extract', hostvars, ['ansible_default_ipv4', 'address'])| list}}"  #所有节点ip 格式 [<ip1>,<ip2>]
+zookeeper_ip: "{% for h in groups['zookeeper'] %}{{ hostvars[h]['ansible_default_ipv4']['address']}},{% endfor %}" # confluent ip 目前一般只有一个如果以后有多个需要修改格式
+zookeeper_home: "{{zookeeper_install_root}}/zookeeper"   #confluent 程序目录
+zookeeper_client_port: 2181 

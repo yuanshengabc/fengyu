@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cn.deepclue</groupId>
+        <artifactId>deepclue-spring-boot-starters</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <groupId>cn.deepclue</groupId>
+    <artifactId>deepclue-common-starter</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>deepclue web common spring boot starter</name>
+    <description>deepclue web common Spring boot starter</description>
+    <url>http://172.24.65.100/deepclue/deepclue-build</url>
+    <properties>
+        <spring-boot-dependencies.version>1.5.4.RELEASE</spring-boot-dependencies.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.deepclue</groupId>
+            <artifactId>deepclue-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

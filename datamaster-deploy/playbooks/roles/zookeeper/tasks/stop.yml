@@ -1,0 +1,7 @@
+---
+
+- name: stop zookeeper
+  tags: stop
+  clueserv: name=zookeeper path={{ zookeeper_home }} state=stopped
+  async: 120 
+  poll: 1

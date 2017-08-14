@@ -1,0 +1,5 @@
+---
+
+sqoop_install_root: "{{ components_library }}"      #java 安装目录
+sqoop_home: "{{sqoop_install_root}}/sqoop"   #java 默认home 目录
+sqoop_package: sqoop-1.4.6    ##安装包名称 使用开始字符串匹配 格式为tar.gz

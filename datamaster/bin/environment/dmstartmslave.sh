@@ -1,0 +1,1 @@
+nohup /opt/mesos/sbin/mesos-slave --master=${1}:5050 --work_dir=/data/datamaster/mesos --log_dir=/data/datamaster/mesos/log --quiet --gc_delay=2weeks --disk_watch_interval=60mins &

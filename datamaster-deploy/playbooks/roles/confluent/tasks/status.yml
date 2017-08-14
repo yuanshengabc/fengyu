@@ -1,0 +1,10 @@
+---
+
+- name: get confluent node status
+  tags: status
+  clueserv: name=confluent path={{ confluent_home }} state=status
+  register: node_status
+
+- debug: msg={{ node_status }}
+  tags: status
+

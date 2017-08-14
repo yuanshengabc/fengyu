@@ -1,0 +1,13 @@
+---
+
+zookeeper_listen_ip: 127.0.0.1
+
+zookeeper_install_root: /opt/deepclue
+
+zookeeper_home: "{{ zookeeper_install_root }}/zookeeper"
+
+zookeeper_data_root: /data/deepclue/zookeeper
+
+zookeeper_path_log: "{{zookeeper_data_root}}/logs" 
+
+zookeeper_client_port: 2181

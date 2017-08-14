@@ -1,0 +1,46 @@
+#!/usr/bin/expect -f
+set timeout 5
+set depsw [lindex $argv 0]
+spawn mysql_secure_installation
+expect {
+   "Enter password for user root"
+       {
+           send "$depsw\n"
+           exp_continue
+       }
+    "Change the password for root ?"
+       {
+           send "Y\n"
+           exp_continue
+       }
+    "New password:"
+       {
+           send "datA123!@#\n"
+           exp_continue
+       }
+    "Re-enter new password"
+       {
+           send "datA123!@#\r"
+           exp_continue
+       }
+    "Remove anonymous users"
+       {
+           send "\n"
+           exp_continue
+       }
+    "login remotely"
+       {
+           send "\n"
+           exp_continue
+       }
+    "access to it"
+       {
+           send "\n"
+           exp_continue
+       }
+    "privilege tables now"
+       {
+           send "\n"
+           exp_continue
+       }
+}

@@ -1,0 +1,26 @@
+---
+
+- name: start es
+  tags: start
+  clueserv: name=es path={{ es_home }} state=started
+  async: 120 
+  poll: 1
+
+- name: check cluster status
+  tags: check
+  uri:
+    url: "http://{{ es_listen_ip }}:{{ es_port }}/_cluster/health?"
+    return_content: yes
+  register: start_status
+  until:
+    - start_status.failed is undefined or (start_status.failed == false)
+    - (start_status.content | from_json).number_of_nodes == (groups['es'] | length)
+    - (start_status.content | from_json).status == "green"
+  retries: 5
+  delay: 3
+  run_once: True
+  #failed_when: False
+  #changed_when: False
+
+  #- debug: msg={{ start_status }}
+  #  tags: check

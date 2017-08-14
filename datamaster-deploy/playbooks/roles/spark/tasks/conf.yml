@@ -1,0 +1,17 @@
+---
+
+- name: config spark
+  tags: conf
+  template: src="{{ item.tmpl }}" dest="{{ spark_home }}/conf/{{ item.dst }}"
+  with_items:
+    - { tmpl: log4j.properties.j2, dst: log4j.properties }
+    - { tmpl: spark-env.sh.j2, dst: spark-env.sh }
+    - { tmpl: spark-defaults.conf.j2, dst: spark-defaults.conf }
+  register: confstat
+
+  #- name: config control
+  #  tags: conf
+  #  template: src={{ item.tmpl }} dest={{ spark_home }}/control/{{ item.dst }}
+  #  with_items:
+  #    - { tmpl: control_conf.py.j2, dst: control_conf.py }
+

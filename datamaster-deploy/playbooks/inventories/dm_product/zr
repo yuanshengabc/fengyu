@@ -1,0 +1,42 @@
+[expect]
+
+[expect:children]
+mysql
+
+[initsys]
+172.24.65.159
+
+[confluent]
+172.24.65.159
+[zookeeper]
+172.24.65.159
+[zookeeper:children]
+[mysql]
+172.24.65.159
+
+[nginx]
+172.24.65.159
+
+[java]
+172.24.65.159
+
+[es]
+172.24.65.159 is_transport=1
+
+[datamaster]
+172.24.65.159 is_datamaster=1
+
+[datamaster:children]
+confluent
+es
+mysql
+[hdfs]
+172.24.65.159 is_namenode=1 is_jobhistory=1 is_datanode=1 is_secondary=1
+[sqoop]
+172.24.65.159
+[mesos]
+172.24.65.159 is_mesos_master=1  #是否是master
+[spark]
+
+[spark:children]
+mesos

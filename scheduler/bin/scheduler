@@ -1,0 +1,38 @@
+#!/bin/bash
+command=$1
+parameter=$2
+confpath=$3
+
+basedir=$(dirname "$0")
+export BINPATH=$basedir
+export SCHPATH=${basedir}/..
+
+case $1 in
+stop)
+	${BINPATH}/sys/schstopjar.sh;;
+build)
+	if [ ! $2 ];then
+		${BINPATH}/sys/schbuildjar.sh local
+	else
+		${BINPATH}/sys/schbuildjar.sh $2
+	fi;;
+
+installall)
+    ${BINPATH}/environment/schinstallall.sh;;
+installmysql)
+	${BINPATH}/environment/schinstallmysql.sh;;
+
+initall)
+	${BINPATH}/environment/schinitall.sh;;
+initmysql)
+	${BINPATH}/environment/schinitmysql.sh;;
+
+start)
+    ${BINPATH}/sys/schstartjar.sh;;
+
+'')
+	echo "You should input keyword!";;
+
+*)
+	echo "Sorry,you input wrong keyword~";;
+esac

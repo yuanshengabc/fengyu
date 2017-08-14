@@ -1,0 +1,77 @@
+
+
+[init]
+192.168.122.102
+192.168.122.103
+192.168.122.104
+
+[hadoop]
+192.168.122.103 is_namenode1=1 is_datanode=1 is_rm1=1 is_nm=1 is_journalnode=1
+192.168.122.104 is_namenode2=1 is_datanode=1 is_rm2=1 is_nm=1 is_journalnode=1
+192.168.122.105 is_datanode=1 is_nm=1 is_journalnode=1
+
+[confluent]
+192.168.122.103
+192.168.122.104
+
+[zookeeper]
+192.168.122.103 is_zk=1
+192.168.122.104 is_zk=1
+192.168.122.105 is_zk=1
+
+[zookeeper:children]
+confluent
+hadoop
+
+[mysql]
+192.168.122.102
+
+[expect]
+[expect:children]
+mysql
+
+[datamasterweb]
+192.168.122.102
+[nginx]
+192.168.122.103
+
+[nginx:children]
+datamasterweb
+
+[java]
+192.168.122.102
+192.168.122.103
+192.168.122.104
+
+
+[es]
+192.168.122.102 is_transport=1 #是否是transport
+192.168.122.103
+
+
+[sqoop]
+192.168.122.103
+
+
+
+[mesos]
+192.168.122.102 is_mesos_master=1  #是否是master
+
+
+[spark]
+
+[spark:children]
+mesos
+
+[datamaster]
+dell1 is_datamaster=1   #是否是真的datamaster
+
+[datamaster:children]
+confluent
+es
+mysql
+
+[hdfs]
+192.168.122.102 is_namenode=1 is_jobhistory=1 is_datanode=1
+192.168.122.103 is_secondary=1 is_datanode=1
+

@@ -1,0 +1,67 @@
+group 'cn.deepclue.datamaster'
+version "$version"
+
+buildscript {
+    repositories {
+        jcenter()
+        maven { url "http://repo.spring.io/snapshot" }
+        maven { url "http://repo.spring.io/milestone" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+jar {
+    baseName = 'cleaner'
+    version =  "$version"
+}
+
+configurations.all {
+    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    exclude group: 'log4j', module: 'log4j'
+}
+
+repositories {
+    jcenter()
+    maven { url "http://repo.spring.io/snapshot" }
+    maven { url "http://repo.spring.io/milestone" }
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:1.2.0")
+    compile("org.elasticsearch:elasticsearch:$elasticsearchVersion")
+    compile "org.hibernate:hibernate-validator:$hibernateValidatorVersion"
+    compile "org.springframework.boot:spring-boot-starter-aop:$springBootVersion"
+    //compile "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
+    compile project(':libraries:scheduler')
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: "$commonsLang3Version"
+}
+
+bootRun {
+    systemProperties = System.properties
+}
+
+task execShell(type: Exec) {
+    workingDir "$projectDir/src/integTest/resources/"
+    commandLine './pre-integ-test.sh'
+}
+
+build {
+    dependsOn 'copyJars'
+}
+
+task copyJars(type: Copy, dependsOn: jar) {
+    from(jar)
+    into "$rootDir/genlibs/"
+}
+
+integrationTest.dependsOn execShell
+
+//check.dependsOn integrationTest

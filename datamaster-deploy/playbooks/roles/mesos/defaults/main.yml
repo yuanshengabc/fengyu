@@ -1,0 +1,10 @@
+---
+
+mesos_cluster_name: xinghe
+
+mesos_data_root: /data/datamaster/mesos
+
+mesos_path_log: "{{ mesos_data_root }}/logs"
+mesos_path_work: "{{ mesos_data_root }}/work"
+mesos_path_run: "{{ mesos_data_root }}/run"
+

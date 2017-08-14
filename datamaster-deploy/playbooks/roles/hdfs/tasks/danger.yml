@@ -1,0 +1,6 @@
+---
+
+- name: watch dog for dangerous things
+  tags: danger
+  shell: echo 'Pls run playbook by parameter --task=install,conf,start,...' && /bin/false
+

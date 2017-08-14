@@ -1,0 +1,49 @@
+spring:
+  profiles:
+    active: dev
+
+ioBean:
+  recordNumber: 10000000
+  recordColumn: 6
+  importTableName: person
+
+rsSchema:
+  name: testio.rsSchemaNameTest
+
+esTypeConfig:
+  clusterName: datamaster
+  clusterIp: 172.24.8.110
+  shardsNum: 1
+  replicasNum: 1
+
+kafkaConfig:
+  schemaRegServer: 172.24.8.115
+  zkConfig:
+    zkUrl: 172.24.8.115
+    sessionTimeout: 5000
+    connectionTimeout: 5000
+
+mysqlImport:
+  ip: 172.24.8.100
+  port: 3306
+  database: taiwan
+  username: magneto
+  password: data123!@#
+
+mysqlExport:
+  ip: 172.24.8.110
+  port: 3306
+  database: test_io
+  username: datamaster
+  password: datA123!@#
+
+hdfsConfig:
+  server: 172.24.8.110
+  port: 9000
+  username: magneto
+
+logging:
+    path: /data/datamaster/log
+    level:
+         root: error
+    config: classpath:logback-spring.xml

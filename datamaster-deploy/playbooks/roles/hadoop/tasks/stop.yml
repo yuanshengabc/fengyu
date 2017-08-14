@@ -1,0 +1,8 @@
+---
+
+- name: stop hadoop
+  tags: stop
+  clueserv: name=hdfs path={{ hdfs_home }} state=stopped
+  when:
+    - is_namenode1 is defined
+    - is_namenode1

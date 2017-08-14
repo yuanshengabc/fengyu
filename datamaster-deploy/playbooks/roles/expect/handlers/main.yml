@@ -1,0 +1,6 @@
+---
+
+- name: restart mesos
+  include: restart.yml
+  listen: "restart all"
+  

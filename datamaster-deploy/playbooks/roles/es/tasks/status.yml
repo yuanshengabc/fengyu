@@ -1,0 +1,22 @@
+---
+
+- name: get es node status
+  tags: status
+  clueserv: name=es path={{ es_home }} state=status
+  register: node_status
+
+- debug: msg={{ node_status }}
+  tags: status
+
+- name: get es cluster status
+  tags: status
+  uri:
+    url: "http://{{ es_listen_ip }}:{{ es_port }}/_cluster/health?"
+    return_content: yes
+  register: clu_status
+  run_once: True
+
+- debug: msg={{ clu_status.content }}
+  tags: status
+  run_once: True
+  

@@ -1,0 +1,9 @@
+mysql_package: mysql # #安装包名称 使用开始字符串匹配 格式为tar.gz  这里是把需要的 yum 文件打包成gz
+mysql_user: datamaster  #新建用户 开启%访问
+mysql_root_pass: datA123!@# #初始化的root 密码 新建用户也使用同一密码
+mysql_home: "{{ components_library }}/mysql" # mysql home 路径用于是yum安装所有不是真正的程序目录，只放置使用python 写的起停控制脚本
+datadir: /data/datamaster/mysql            # 数据存储路径
+character_set_server: utf8      #编码格式
+max_allowed_packet: 1024M
+mysql_listen_ip: "{{ default_listen_ip }}"  #mysql主机ip
+sql_init: [drop.sql,schema.sql,data.sql,tables_mysql_innodb.sql]

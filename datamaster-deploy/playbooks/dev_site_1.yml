@@ -1,0 +1,13 @@
+---
+- include: initsys.yml
+- include: java.yml
+- include: expect.yml
+- include: es.yml
+- include: zookeeper.yml
+- include: confluent.yml
+- include: nginx.yml
+- include: mysql.yml
+- include: mesos.yml
+- include: spark.yml
+- include: hadoop.yml
+- include: sqoop.yml

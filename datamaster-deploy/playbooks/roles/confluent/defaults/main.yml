@@ -1,0 +1,16 @@
+---
+
+confluent_listen_ip: 127.0.0.1
+
+confluent_data_root: /data/deepclue/confluent
+confluent_install_root: /opt/deepclue
+
+confluent_home: "{{ confluent_install_root }}/confluent"
+
+confluent_path_log: "{{ confluent_data_root }}/logs"
+
+
+kafka_path_log: "{{ confluent_data_root }}/kafka/logs"
+
+schema_registry_path_log: "{{ confluent_data_root}}/schema_registry/logs"
+

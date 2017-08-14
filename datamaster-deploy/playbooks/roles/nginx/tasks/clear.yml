@@ -1,0 +1,13 @@
+---
+
+- name: clear nginx_home
+  tags: danger,clear
+  sudo: yes
+  file: path={{ nginx_home }} state=absent
+  register: clearstat
+  failed_when: False
+
+- name: yum remove nginx
+  tags: danger,clear
+  sudo: yes
+  yum: name=nginx state=removed

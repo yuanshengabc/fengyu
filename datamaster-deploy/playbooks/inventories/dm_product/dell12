@@ -1,0 +1,35 @@
+[expect]
+
+[expect:children]
+mysql
+
+[init]
+172.24.63.32
+
+[confluent]
+172.24.63.32
+
+[mysql]
+172.24.63.32
+
+[nginx]
+172.24.63.32
+[nginx:children]
+datamasterweb
+
+[java]
+172.24.63.32
+
+[es]
+172.24.63.32 is_transport=1
+
+[datamaster]
+172.24.63.32 is_datamaster=1
+
+[datamasterweb]
+172.24.63.32 is_datamasterweb=1
+
+[datamaster:children]
+confluent
+es
+mysql

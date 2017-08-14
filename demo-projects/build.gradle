@@ -1,0 +1,26 @@
+group 'cn.deepclue.projcet'
+version '1.0-SNAPSHOT'
+apply plugin: 'java'
+
+allprojects {
+    sourceCompatibility = 1.8
+    apply plugin: 'java'
+    repositories {
+        mavenLocal()
+        maven {
+            url 'http://172.24.65.100:8081/nexus/content/groups/public'
+        }
+        mavenCentral()
+        maven {
+            url 'http://packages.confluent.io/maven/'
+        }
+    }
+}
+
+subprojects {
+    libsDirName = '../../output'
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}

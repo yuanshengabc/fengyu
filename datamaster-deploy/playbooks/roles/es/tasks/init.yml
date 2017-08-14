@@ -1,0 +1,5 @@
+---
+
+- name: init es
+  tags: init
+  shell: curl -XDELETE "http://{{estransport_ip}}:9200/_all"

@@ -1,0 +1,7 @@
+---
+
+- name: start datanode
+  tags: start
+  clueserv: name=hdfs path={{ hdfs_home }} state=started arg='datanode'
+  async: 120 
+  poll: 1

@@ -1,0 +1,8 @@
+---
+
+- name: start confluent
+  tags: start
+  clueserv: name=confluent path={{ confluent_home }} state=started
+  async: 120 
+  poll: 1
+

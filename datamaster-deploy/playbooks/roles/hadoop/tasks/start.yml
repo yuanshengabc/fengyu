@@ -1,0 +1,8 @@
+---
+
+- name: start hadoop
+  tags: start
+  clueserv: name=hdfs path={{ hdfs_home }} state=started
+  when:
+    - is_namenode1 is defined
+    - is_namenode1

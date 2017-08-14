@@ -1,0 +1,156 @@
+#! /usr/bin/python
+# -*- coding:utf8 -*-
+import sys
+import stat
+reload(sys)
+sys.setdefaultencoding('utf8')
+from jinja2 import Environment, PackageLoader
+import json
+import os
+import yaml
+import urllib
+import hashlib
+
+http_server = 'http://172.24.8.81/'
+
+def create_temp_all():
+    if os.path.exists('temp') is False or os.path.isdir('temp') is False:
+        os.mkdir('temp')
+    with open('conf.yml','r') as fd:
+        with open('temp/all.yml','w') as fh:
+            flag = False
+            for line in fd.readlines():
+                if line.startswith('#startblock'):
+                    flag = True
+                    continue
+                elif line.startswith('#endblock'):
+                    flag = False
+                    break
+                if flag == True:
+                    fh.write(line)
+    return 0
+
+def display(msg,ptype='success'):
+
+    print ptype
+    if ptype == 'success':
+        print '\033[1;32;2m'+msg+'\033[0m'
+    elif ptype == 'error':
+        print '\033[1;31;2m'+msg+'\033[0m'
+    elif ptype == 'warn':
+        print '\033[1;33;2m'+msg+'\033[0m'
+    else:
+        print msg
+
+def get_package_name(path):
+    ret = {}
+    for file in os.listdir(path):
+        file_path = os.path.join(path,file)
+        match = read_conf(file_path)
+        for k,v in match.items():
+            if '_package' in k:
+                ret[v]= 1
+                break
+    return ret
+
+def read_conf(file_path='conf.yml'):
+    ret = {}
+    with open(file_path,'r') as fd:
+        ret = yaml.load(fd)
+        '''
+        for line in fd.readlines():
+            line = line.strip()
+            if not line.startswith('#') and not line.startswith('---'):
+                match = line.split(': ')
+                key = match[0].strip()
+                value = match[1].split('#')[0].strip()
+                ret[key] = value
+        '''
+    return ret
+
+def get_md5(file):
+        md5 = hashlib.md5()
+        with open(file) as fd:
+            while True:
+                data = fd.read(4096)
+                if not data:
+                    break
+                md5.update(data)
+        str_md5 = md5.hexdigest()
+        if str_md5 == '':
+            return '00000'
+        else:
+            return str_md5
+
+def down_file(filename,save_path ='/opt/packages/'):
+    
+
+    if not os.path.exists(save_path):
+        os.mkdir(save_path)
+    param = urllib.urlencode({'name':filename})
+    http = urllib.urlopen(http_server+'cgi-bin/search?%s'%param)
+    data = http.read()
+    result = json.loads(data)
+    if len(result) > 0:
+        package = result[0]
+    else:
+        #print 'package %s downloaded not find'%filename
+
+        display('package %s downloaded not find'%filename, 'warn') 
+        return -1
+
+    print 'downloading package %s'%package['name']
+    down_url = package['url']#'http://172.24.63.21/packages/deploy.tar.gz'
+    file_path = os.path.join(save_path,package['name'])
+    if os.path.exists(file_path):
+        if get_md5(file_path) == package['md5']:
+            print 'package %s is exist in local'%package['name']
+            display('package %s is exist in local'%package['name'],'success')
+            return 1
+        else:
+            os.remove(file_path)
+    urllib.urlretrieve(down_url, file_path)
+    if get_md5(file_path) == package['md5']:
+        #print 'package %s downloaded success'%package['name']
+        display('package %s downloaded success'%package['name'],'success')
+        return 0
+    else:
+        #print 'package %s downloaded failed'%package['name']
+        display('package %s downloaded failed'%package['name'],'error')
+        return -1
+
+if __name__=='__main__':
+
+    global_conf = read_conf()
+    print global_conf
+    
+    print 'strat conf all.yml.....'
+    create_temp_all()
+    for v in global_conf["group_vars_path"]:
+        for file in os.listdir('temp'):
+            path1,path2 = os.path.join('temp',file),os.path.join(v,file)
+            if os.path.exists(path2):
+                os.remove(path2)
+            os.system("cp %s %s " % (path1, v))
+    print 'conf all.yml success '
+
+    print 'start conf buildANDtar.sh.......'
+    env = Environment(loader=PackageLoader('templates', ''))
+    template = env.get_template('buildANDtar.sh.j2')
+    with open('buildANDtar.sh','w') as fd:
+        fd.write(template.render(build_dir=global_conf['build_dir'],business_library=global_conf['business_library'],
+                    datamaster_web_dir=global_conf['datamaster_web_dir']))
+    os.chmod('buildANDtar.sh',os.stat('buildANDtar.sh').st_mode|stat.S_IXGRP|stat.S_IXUSR)
+    print 'conf buildANDtar.sh success '
+    group_vars_paths = global_conf['group_vars_path']
+    packages = {}
+    for v in group_vars_paths:
+        packages.update(get_package_name(v.strip()))
+    print 'start checking and down tar.gz from server...'
+    for v in packages:
+        if 'datamaster' not in v:
+            print 'start download ',v
+            ret = down_file(v,global_conf['publish_library'])
+            
+    print 'download over ..'
+    print 'conf over ...'

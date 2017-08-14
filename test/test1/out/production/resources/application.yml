@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: test1
+  datasource:
+    schema: classpath:sql/schema.sql
+    initialize: true
+    continue-on-error: false
+    name: datamaster
+    # mysql username
+    username: root
+    # Mysql password
+    password: datA123!@#
+    # Mysql connection url
+    url: jdbc:mysql://127.0.0.1/datamaster?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&createDatabaseIfNotExist=true
+    driver-class-name: com.mysql.jdbc.Driver
+    sql-script-encoding: UTF-8
+    tomcat:
+      max-active: 20
+      max-idle: 20
+      max-wait: 60000
+      min-idle: 1
+  aop:
+    auto: true
+    proxy-target-class: true
+  jackson:
+    default-property-inclusion: non_null
+server:
+  context-path: /test1
+  port: 8080
+  tomcat:
+    uri-encoding: utf-8
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true

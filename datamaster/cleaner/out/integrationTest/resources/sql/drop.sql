@@ -1,0 +1,24 @@
+CREATE DATABASE IF NOT EXISTS datamaster;
+
+DROP TABLE IF EXISTS `datahouse`;
+DROP TABLE IF EXISTS `database`;
+DROP TABLE IF EXISTS `datatable`;
+DROP TABLE IF EXISTS `datasource`;
+DROP TABLE IF EXISTS `datamaster_source`;
+DROP TABLE IF EXISTS `from_source`;
+DROP TABLE IF EXISTS `ontology_source`;
+DROP TABLE IF EXISTS `fusion_property`;
+DROP TABLE IF EXISTS `workspace`;
+DROP TABLE IF EXISTS `cleaning_workspace`;
+DROP TABLE IF EXISTS `fusion_workspace`;
+DROP TABLE IF EXISTS `workspace_edition`;
+DROP TABLE IF EXISTS `workspace_edition_task`;
+DROP TABLE IF EXISTS `workspace_source`;
+DROP TABLE IF EXISTS `transformation`;
+DROP TABLE IF EXISTS `ontology_mapping`;
+DROP TABLE IF EXISTS `objecttype`;
+DROP TABLE IF EXISTS `propertytype`;
+DROP TABLE IF EXISTS `propertygroup`;
+DROP TABLE IF EXISTS `recordsource`;
+DROP TABLE IF EXISTS `task`;
+DROP TABLE IF EXISTS `rsfield`;

@@ -1,0 +1,7 @@
+---
+
+- hosts : datamaster
+  
+
+  roles:
+          - datamaster

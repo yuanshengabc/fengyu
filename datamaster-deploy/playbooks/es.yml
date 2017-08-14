@@ -1,0 +1,8 @@
+---
+
+- hosts : es
+  
+  #remote_user :  magneto
+
+  roles:
+          - es

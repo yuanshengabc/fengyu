@@ -1,0 +1,7 @@
+---
+
+- name: stop confluent
+  tags: stop
+  clueserv: name=confluent path={{ confluent_home }} state=stopped
+  async: 120 
+  poll: 1

@@ -1,0 +1,23 @@
+
+#以下两个参数是定义buildANDtar.sh脚本的参数
+build_dir: /opt/datamaster       #打包后端所指定的路径，可以将工程git clone到新路径专门用来做打包
+datamaster_web_dir: /opt/datamaster-web #打包前端所指定的路径，可以将工程git clone到新路径专门用来做打包
+#配置all.yml的位置，
+group_vars_path: [./playbooks/inventories/dm_develop/group_vars,./playbooks/inventories/dm_product/group_vars]
+
+#以下会改变ansible工程里all.yml文件的内容
+#startblock
+work_root_dir: /opt               #整个工程所放置的路径，包括星河前后端，组件，组件的安装包。默认放置在/opt
+publish_library: /opt/dmpgs    #所有安装包在ansible本机存放路径
+business_library: /opt/dmtars     #放置发版的星河前后端代码的路径
+remote_pkgs_library: /opt/dmpackages    #远程 主机安装包存放路径，也就是ansible操作机存放安装包的路径
+remote_user: magneto
+components_library: /opt/dmcomponents
+status: debug   #                 #启动状态，不用修改，
+#inet_card: ansible_em1
+#default_listen_ip: "{{ ansible_default_ipv4.address }}"
+default_listen_ip: "{{ ansible_default_ipv4.address }}" #默认ip
+root_dirs_owner: magneto  #下列文件夹对应用户和用户
+root_dirs: ["{{work_root_dir}}",/data/datamaster,"{{remote_pkgs_library}}","{{ components_library }}",/data01,/data02,/data03,/data04,/data05,/data06,/data07]
+# root_dirs是需要修改生成用户用户组以及权限的文件夹
+#endblock

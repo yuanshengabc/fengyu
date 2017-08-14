@@ -1,0 +1,78 @@
+- name: start journalnode
+  tags: init
+  shell: "{{ hdfs_home }}/sbin/hadoop-daemons.sh start journalnode"
+  when:
+    - is_namenode1 is defined
+    - is_namenode1
+
+- name: format zk
+  tags: init
+  shell: "{{ hdfs_home }}/bin/hdfs zkfc -formatZK"
+  when:
+    - is_namenode1 is defined
+    - is_namenode1
+
+- name: namenode1 format
+  tags: init
+  shell: "{{ hdfs_home }}/bin/hdfs namenode -format {{hdfs_cluster_name}}"
+  when:
+    - is_namenode1 is defined
+    - is_namenode1
+
+- name: start namenode1
+  tags: init
+  shell: "{{ hdfs_home }}/sbin/hadoop-daemons.sh start namenode"
+  when:
+    - is_namenode1 is defined
+    - is_namenode1
+
+- name: bootstrapStandby
+  tags: init
+  shell: |
+    hdfs namenode -bootstrapStandby
+    warn=no
+  when:
+    - is_namenode2 is defined
+    - is_namenode2
+
+- name: start namenode2
+  tags: init
+  shell: "{{ hdfs_home }}/sbin/hadoop-daemons.sh start namenode"
+  when:
+    - is_namenode2 is defined
+    - is_namenode2
+
+- name: start datanode
+  tags: init
+  shell: "{{ hdfs_home }}/sbin/hadoop-daemons.sh start datanode"
+  when:
+    - is_namenode1 is defined
+    - is_namenode1
+
+- name: start zkfc
+  tags: init
+  shell: "{{ hdfs_home }}/sbin/hadoop-daemons.sh start zkfc"
+  when:
+    - is_namenode1 is defined
+    - is_namenode1
+
+- name: start resourcemanager1
+  tags: init
+  shell: "{{ hadoop_home }}/sbin/yarn-daemons.sh start resourcemanager"
+  when:
+    - is_rm1 is defined
+    - is_rm1
+
+- name: start resourcemanager2
+  tags: init
+  shell: "{{ hadoop_home }}/sbin/yarn-daemons.sh start resourcemanager"
+  when:
+    - is_rm2 is defined
+    - is_rm2
+
+- name: start nodemanager
+  tags: init
+  shell: "{{ hadoop_home }}/sbin/yarn-daemons.sh start nodemanager"
+  when:
+    - is_namenode1 is defined
+    - is_namenode1

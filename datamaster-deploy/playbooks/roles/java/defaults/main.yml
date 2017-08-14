@@ -1,0 +1,4 @@
+---
+
+java_install_root: /usr/java/
+java_home: "{{java_install_root}}/default"

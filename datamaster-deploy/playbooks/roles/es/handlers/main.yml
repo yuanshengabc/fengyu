@@ -1,0 +1,6 @@
+---
+
+- name: restart es
+  include: restart.yml
+  listen: "restart all"
+  

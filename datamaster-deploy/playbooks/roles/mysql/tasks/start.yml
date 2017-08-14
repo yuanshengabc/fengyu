@@ -1,0 +1,10 @@
+---
+
+- name: start mysql
+  tags: start
+  sudo: yes
+  #clueserv: name=mysql path={{ mysql_home }} state=started
+  shell: systemctl start mysqld
+  #service: name=mysqld state=started
+  #async: 120
+  #poll: 1

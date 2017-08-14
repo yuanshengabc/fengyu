@@ -1,0 +1,14 @@
+# This file contains environment variables that are passed to mesos-master.
+# To get a description of all options run mesos-master --help; any option
+# supported as a command-line option is also supported as an environment
+# variable.
+
+# Some options you're likely to want to set:
+export MESOS_ip="{{ mesos_master_ip }}"
+export MESOS_port="{{ mesos_master_port }}"
+export MESOS_CLUSTER="{{ mesos_cluster_name }}"
+export MESOS_hostname="{{ mesos_master_ip }}"
+export MESOS_work_dir="{{ mesos_path_work }}"
+export MESOS_log_dir="{{ mesos_path_log }}"
+export MESOS_quiet=1
+

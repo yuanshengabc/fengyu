@@ -1,0 +1,44 @@
+#!/bin/bash
+commandd=$1
+parameter=$2
+
+case $1 in 
+start)
+	ssh 172.24.8.115 "rm -f /opt/datamast/libs/*.jar"
+	scp /opt/datamaster/cleaner/build/libs/cleaner-0.1.0-SNAPSHOT.jar 172.24.8.115:/opt/datamaster/libs/
+        ssh 172.24.8.115 "/opt/datamaster/bin/sys/dmstopjar.sh"
+	sleep 1
+	if [ ! $2 ];then
+		nohup ssh 172.24.8.115 "/usr/java/jdk1.8.0_72/bin/java -jar /opt/datamaster/libs/*.jar --spring.profiles.active=dev --spring.config.location=/opt/datamaster/conf/application.yml" > /data/log/datamaster/dmscp55.log &
+		echo now starting dev,the log is data/log/datamaster/dmscp55.log
+	else
+		nohup ssh 172.24.8.115 "/usr/java/jdk1.8.0_72/bin/java -jar /opt/datamaster/libs/*.jar --spring.profiles.active=$2 --spring.config.location=/opt/datamaster/conf/application.yml" > /data/log/datamaster/dmscp55.log &
+		echo now starting $2,the log is data/log/datamaster/dmscp55.log
+	fi;;
+stop)
+        ssh 172.24.8.115 "/opt/datamaster/bin/sys/dmstopjar.sh";;
+startweb)
+		ssh 172.24.8.115 "rm -f /opt/datamaster/www/"
+		scp /opt/datamaster-web/dist/ 172.24.8.115:/opt/datamaster/www/
+        ssh 172.24.8.115 "/opt/datamaster/bin/sys/dmstartweb.sh";;
+
+startall)
+        ssh 172.24.8.115 "/opt/datamaster/bin/environment/dmstartall.sh";;
+startes)
+        ssh 172.24.8.115 "/opt/datamaster/bin/environment/dmstartes.sh";;
+startcp)
+        ssh 172.24.8.115 "/opt/datamaster/bin/environment/dmstartcp.sh";;
+startnginx)
+        ssh 172.24.8.115 "/opt/datamaster/bin/environment/dmstartnginx.sh";;
+
+stopall)
+        ssh 172.24.8.115 "/opt/datamaster/bin/environment/dmstopall.sh";;
+stopcp)
+        ssh 172.24.8.115 "/opt/datamaster/bin/environment/dmstopcp.sh";;
+stopes)
+        ssh 172.24.8.115 "/opt/datamaster/bin/environment/dmstopes.sh";;
+stopnginx)
+        ssh 172.24.8.115 "/opt/datamaster/bin/environment/dmstopnginx.sh";;
+*)
+	echo you input wrong keyword,please try again.
+esac

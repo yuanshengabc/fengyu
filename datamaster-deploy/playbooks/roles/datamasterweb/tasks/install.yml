@@ -1,0 +1,41 @@
+---
+
+- block:
+  - name: test web_dir
+    tags: install
+    #sudo: yes
+    file: path={{web_dir}} mode=775 state=directory owner={{root_dirs_owner}} group={{root_dirs_owner}}
+
+  - name: check dist package
+    tags: install,find_package
+    find: paths={{ business_library }} use_regex=True patterns="^{{ dist_package }}" file_type=file
+    register: pkg_files
+    delegate_to: 127.0.0.1
+    failed_when: pkg_files.matched == 0
+
+  - name: get the package name
+    tags: install,find_package
+    #vars:
+      #- pkg_file_name: "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+    shell: echo "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+    register: pkg_file_name
+    delegate_to: 127.0.0.1
+    changed_when: False
+
+  - debug: msg="package = {{ pkg_file_name.stdout }}"
+    tags: install,find_package
+    delegate_to: 127.0.0.1
+
+  - name: sync installation package
+    tags: install
+    copy: src={{ pkg_file_name.stdout }} dest={{ remote_pkgs_library }}/
+
+  - name: tar package
+    tags: install
+    #sudo: yes
+    vars:
+      - src_pkg_full_path: "{{ remote_pkgs_library }}/{{ pkg_file_name.stdout | basename }}"
+    shell: >
+      cd {{ web_dir }}
+      && tar -xvf {{ src_pkg_full_path }}
+      warn=no

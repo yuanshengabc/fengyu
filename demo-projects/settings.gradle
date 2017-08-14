@@ -1,0 +1,6 @@
+rootProject.name = 'demo-projects'
+
+include ':app'
+include ':app-a'
+include ':app-b'
+include ':app-c'

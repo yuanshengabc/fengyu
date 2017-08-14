@@ -1,0 +1,17 @@
+esconfig:
+  clusterName: datamaster
+  clusterIp: 172.24.8.115
+  shardsNum: 5
+  replicasNum: 2
+
+kafkaConfig:
+  brokerServer: 172.24.8.115
+  zkServer: 172.24.8.115
+  schemaRegServer: 172.24.8.115
+
+mysqlConfig:
+  host: 172.24.8.115
+  port: 3306
+  database: datamaster
+  username: root
+  password: data123!@#

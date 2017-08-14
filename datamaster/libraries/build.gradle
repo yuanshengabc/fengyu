@@ -1,0 +1,8 @@
+group 'cn.deepclue.datamaster'
+version "$version"
+
+apply plugin: 'java'
+
+dependencies {
+    testCompile "junit:junit:$junitVersion"
+}

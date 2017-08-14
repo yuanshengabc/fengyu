@@ -1,0 +1,30 @@
+---
+
+- name: clear datas
+  tags: danger,clear
+  sudo: yes
+  file: path={{ datadir }} state=absent
+  register: clearstat
+  failed_when: False
+
+- name: clear mysql_home
+  tags: danger,clear
+  sudo: yes
+  file: path={{ mysql_home }} state=absent
+  register: clearstat
+  failed_when: False
+
+- name: clear mysql.log
+  tags: danger,clear
+  sudo: yes
+  file: path=/var/log/mysqld.log state=absent
+  register: clearstat
+  failed_when: False
+
+- name: yum remove mysql
+  tags: danger,clear
+  sudo: yes
+  yum: name={{ item }} state=removed
+  with_items:
+    - mysql
+    - mysql-libs

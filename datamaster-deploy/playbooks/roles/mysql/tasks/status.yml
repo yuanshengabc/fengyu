@@ -1,0 +1,11 @@
+---
+- name: check mysql status
+  tags: status
+  sudo: yes
+  #clueserv: name=mysql path={{ mysql_home }} state=status
+  shell: systemctl status mysqld &warn=no
+  register: mysql_status
+
+- debug: msg={{ mysql_status.stdout_lines }}
+  tags: status
+  when: mysql_status is defined

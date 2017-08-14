@@ -1,0 +1,8 @@
+---
+
+- name: stop nginx
+  tags: stop
+  sudo: yes
+  clueserv: name=nginx path={{ nginx_home }} state=stopped
+  async: 120
+  poll: 1

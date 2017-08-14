@@ -1,0 +1,6 @@
+---
+
+- name: clear datas
+  tags: danger,clear
+  file: path={{ web_dir }}/{{ web_name }} state=absent
+  failed_when: False

@@ -1,0 +1,59 @@
+---
+
+- block:
+  - name: check package list
+    tags: install,find_package
+    find: paths={{ publish_library }} use_regex=True patterns="^{{ mesos_package }}"
+    register: pkg_files
+    delegate_to: 127.0.0.1
+    failed_when: pkg_files.matched == 0
+
+  - name: get the package name
+    tags: install,find_package
+    #vars:
+      #- pkg_file_name: "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+    shell: echo "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+    register: pkg_file_name
+    delegate_to: 127.0.0.1
+    changed_when: False
+
+  - debug: msg="package = {{ pkg_file_name.stdout }}"
+    tags: install,find_package
+    delegate_to: 127.0.0.1
+
+  - name: sync installation package
+    tags: install
+    copy: src={{ pkg_file_name.stdout }} dest={{ remote_pkgs_library }}/
+
+  - name: link installation package
+    tags: install
+    file: src="{{ remote_pkgs_library }}/{{ pkg_file_name.stdout | basename }}" dest={{ remote_pkgs_library }}/mesos.used state=link
+
+  - name: install package
+    tags: install
+    vars:
+      - src_pkg_full_path: "{{ remote_pkgs_library }}/{{ pkg_file_name.stdout | basename }}"
+    shell: >
+      mkdir -p {{ mesos_install_root }} && cd {{ mesos_install_root }}
+      && pkg_name=`tar -tzf {{ src_pkg_full_path }} | head -1 | cut -d "/" -f 1`
+      && rm -rf ${pkg_name}
+      && tar -xzf {{ src_pkg_full_path }}
+      && rm -rf mesos
+      && ln -s -f -T ${pkg_name} mesos
+      warn=no
+
+  - name: setup data dirs
+    tags: install
+    file: path={{ item }} state=directory
+    with_items:
+      - "{{ mesos_path_work }}"
+      - "{{ mesos_path_log }}"
+      - "{{ mesos_path_run }}"
+
+  - name: install sbin
+    tags: install,install_sbin
+    copy: src=files/sbin dest="{{ mesos_home }}" mode=775
+
+  - name: install control
+    tags: install,install_control
+    copy: src=files/control dest="{{ mesos_home }}"

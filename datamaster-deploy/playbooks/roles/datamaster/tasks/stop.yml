@@ -1,0 +1,7 @@
+---
+
+- name: stop datamaster
+  tags: stop
+  clueserv: name=datamaster path={{ datamaster_home }} state=stopped
+  async: 120
+  poll: 1

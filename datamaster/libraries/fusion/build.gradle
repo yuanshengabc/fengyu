@@ -1,0 +1,43 @@
+group 'cn.deepclue.datamaster'
+version "$version"
+
+apply plugin: 'java'
+apply plugin: 'scala'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':libraries:streamer')
+    compile("com.databricks:spark-avro_2.10:2.0.1")
+    compile("org.apache.spark:spark-core_2.10:1.6.0")
+    compile("org.apache.spark:spark-graphx_2.10:1.6.0")
+    compile("org.apache.spark:spark-sql_2.10:1.6.0")
+    compile("org.json:json:20151123")
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+}
+
+configurations.all {
+    resolutionStrategy.force "org.scala-lang:scala-library:2.10.5"
+}
+
+build {
+    dependsOn 'copyToLib'
+    dependsOn 'copyJars'
+}
+
+task copyToLib(type: Copy) {
+    into "$rootDir/genlibs/sparklibs"
+    from configurations.runtime
+}
+
+task copyJars(type: Copy, dependsOn: jar) {
+    from(jar)
+    into "$rootDir/genlibs/"
+}
+
+// For resolve scala compile
+sourceSets.main.scala.srcDir "src/main/java"
+sourceSets.main.java.srcDirs = []

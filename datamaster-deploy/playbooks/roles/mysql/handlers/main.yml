@@ -1,0 +1,5 @@
+---
+
+- name: restart mysql
+  include: restart.yml
+  listen: "restart all"

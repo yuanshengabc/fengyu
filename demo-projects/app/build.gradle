@@ -1,0 +1,86 @@
+repositories {
+	mavenLocal()
+	maven {
+		url 'http://$mavenIp:8081/nexus/content/groups/public'
+	}
+	mavenCentral()
+}
+
+buildscript {
+	ext {
+		springBootVersion = '1.5.4.RELEASE'
+	}
+	repositories {
+		mavenLocal()
+		maven {
+			url 'http://$mavenIp:8081/nexus/content/groups/public'
+		}
+		mavenCentral()
+	}
+
+
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+
+test {
+	reports.html.destination = file("$reports.html.destination/unit")
+	reports.junitXml.destination = file("$reports.junitXml.destination/unit")
+}
+sourceSets {
+	integrationTest {
+		java.srcDir file('src/integTest/java')
+		resources.srcDir file('src/integTest/resources')
+		compileClasspath = sourceSets.main.output + configurations.testRuntime
+		runtimeClasspath = output + compileClasspath
+	}
+}
+task integrationTest(type: Test) {
+	description = 'Runs the integration tests.'
+	group = 'verification'
+	testClassesDir = sourceSets.integrationTest.output.classesDir
+	classpath = sourceSets.integrationTest.runtimeClasspath
+	reports.html.destination = file("$reports.html.destination/integration")
+	reports.junitXml.destination = file("$reports.junitXml.destination/integration")
+}
+
+
+ext {
+	springCloudVersion = 'Dalston.SR1'
+}
+
+dependencies {
+	compile 'cn.deepclue:deepclue-microservice-starter:0.0.1-SNAPSHOT'
+	compile('org.springframework.cloud:spring-cloud-starter-feign')//客户端负载均衡
+	compile('org.springframework.cloud:spring-cloud-starter-hystrix')//服务熔断
+	compile('org.springframework.cloud:spring-cloud-starter-hystrix-dashboard')
+
+	compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:$mybatisVersion")
+	compile("org.springframework.boot:spring-boot-starter-web")
+	compile "org.apache.commons:commons-lang3:$commonsLang3Version"
+
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "$jacksonVersion"
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: "$jacksonVersion"
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: "$jacksonVersion"
+
+	compile "org.hibernate:hibernate-validator:$hibernateValidatorVersion" //参数验证
+	compile "mysql:mysql-connector-java:$mysqlVersion"
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}

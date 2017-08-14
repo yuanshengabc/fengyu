@@ -1,0 +1,48 @@
+- name: test mesos_conf_dir
+  tags: conf
+  file: path={{ mesos_home }}/etc/mesos state=directory
+
+- name: config mesos
+  tags: conf
+  template: src="mesos/{{ item.tmpl }}" dest="{{ mesos_home }}/etc/mesos/{{ item.dst }}"
+  with_items:
+    - { tmpl: mesos-slave-env.sh.j2, dst: mesos-slave-env.sh }
+    - { tmpl: mesos-master-env.sh.j2, dst: mesos-master-env.sh }
+  register: confstat
+
+- name: config control
+  tags: conf
+  template: src={{ item.tmpl }} dest={{ mesos_home }}/control/{{ item.dst }}
+  with_items:
+    - { tmpl: control_conf.py.j2, dst: control_conf.py }
+
+- name: check master status
+  tags: conf
+  clueserv: name=mesos path={{ mesos_home }} state=status arg="-m master"
+  register: master_stat
+  when:
+    - confstat.changed
+    - is_mesos_master is defined
+    - is_mesos_master
+
+- name: check slaves status
+  tags: conf
+  clueserv: name=mesos path={{ mesos_home }} state=status arg="-m slave"
+  register: slave_stat
+  when: confstat.changed
+  #- debug: msg="{{ servstat.status }}"
+  #  tags: conf
+  #  when: confstat.changed
+
+- debug: msg="{{slave_stat}}"
+  tags: conf
+  
+- name: notify restart
+  shell: echo "config changed, restart service ..."
+  tags: conf
+  when:
+    - confstat.changed
+    - (slave_stat.status == "started" or (master_stat is defined and master_stat.status is defined and master_stat.status == "started"))
+  notify:
+    - restart mesos
+

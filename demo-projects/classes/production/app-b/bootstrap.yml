@@ -1,0 +1,23 @@
+server:
+  port: 7041
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://peer1:7011/eureka/,http://peer2:7012/eureka/,http://peer3:7013/eureka/
+    instance:
+        prefer-ip-address: true
+
+spring:
+  application:
+    name: app-b
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+      label: master
+      profile: ${spring.profiles.active:dev}
+
+
+

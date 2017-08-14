@@ -1,0 +1,79 @@
+<configuration> 
+<property> 
+    <name>yarn.resourcemanager.ha.enabled</name>
+     <value>true</value> 
+</property> <property> 
+     <name>yarn.resourcemanager.cluster-id</name> 
+     <value>rs</value> 
+</property> 
+<property> 
+     <name>yarn.resourcemanager.ha.rm-ids</name> 
+     <value>rm1,rm2</value> 
+</property>
+{% for h in groups['hadoop'] %}
+{%- if hostvars[h].is_rm1 is defined and  hostvars[h].is_rm1 %}
+<property> 
+     <name>yarn.resourcemanager.hostname.rm1</name> 
+     <value>{{hostvars[h]['ansible_default_ipv4']['address']}}</value> 
+</property> 
+<property> 
+      <name>yarn.resourcemanager.webapp.address.rm1</name> 
+      <value>{{hostvars[h]['ansible_default_ipv4']['address']}}:8088</value> 
+</property> 
+{% endif %}
+{%- if hostvars[h].is_rm2 is defined and  hostvars[h].is_rm2 %}
+<property> 
+     <name>yarn.resourcemanager.hostname.rm2</name> 
+     <value>{{hostvars[h]['ansible_default_ipv4']['address']}}</value> 
+</property> 
+<property> 
+      <name>yarn.resourcemanager.webapp.address.rm2</name> 
+      <value>{{hostvars[h]['ansible_default_ipv4']['address']}}:8088</value> 
+</property> 
+{% endif %}
+{% endfor %}
+<property> 
+       <name>yarn.resourcemanager.zk-address</name> 
+       <value>{{zk_cn}}</value> 
+</property> 
+<property> 
+        <name>yarn.nodemanager.vmem-pmem-ratio</name> 
+        <value>1.5</value> 
+</property> 
+<property> 
+         <name>yarn.nodemanager.resource.memory-mb</name> 
+         <value>50000</value> 
+</property> <property> 
+         <name>yarn.nodemanager.resource.cpu-vcores</name> 
+         <value>80</value> 
+</property> 
+<property> 
+         <name>yarn.resourcemanager.scheduler.class</name> 
+         <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler</value> 
+</property> 
+<property> 
+         <name>yarn.scheduler.minimum-allocation-mb</name> 
+         <value>2048</value> 
+</property> 
+<property> 
+          <name>yarn.scheduler.maximum-allocation-mb</name> 
+          <value>32768</value> 
+</property> 
+<property> 
+          <name>yarn.scheduler.maximum-allocation-vcores</name> 
+          <value>24</value> 
+</property> 
+<property> 
+          <name>yarn.scheduler.minimum-allocation-vcores</name> 
+          <value>1</value> 
+</property> 
+<property> 
+          <name>yarn.acl.enable</name> 
+          <value>true</value> 
+          <description>使用使用ACL，默认是false</description> 
+</property> 
+<property> 
+          <name>yarn.nodemanager.aux-services</name> 
+          <value>mapreduce_shuffle</value> 
+</property> 
+</configuration>

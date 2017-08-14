@@ -1,0 +1,53 @@
+management:
+  security:
+    enabled: false
+spring:
+  jackson:
+    default-property-inclusion: non_null
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+      label: master
+      profile: ${spring.profiles.active:dev}
+  #链路跟踪
+  sleuth:
+      sampler:
+        #采样比例 100%
+        percentage: 1
+
+eureka:
+  instance:
+      prefer-ip-address: true
+
+---
+spring:
+  profiles: dev
+  rabbitmq:
+    host: 172.24.8.100
+    port: 5672
+    username: admin
+    password: admin
+  zipkin:
+    base-url: http://172.24.8.100:7030
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://172.24.8.100:7011/eureka/,http://172.24.8.100:7012/eureka/,http://172.24.8.100:7013/eureka/
+
+---
+spring:
+  profiles: beta
+  rabbitmq:
+    host: 172.24.8.100
+    port: 5672
+    username: admin
+    password: admin
+  zipkin:
+    base-url: http://172.24.8.100:7030
+eureka:
+  client:
+    service-url:
+      defaultZone: http://172.24.8.100:7011/eureka/,http://172.24.8.100:7012/eureka/,http://172.24.8.100:7013/eureka/

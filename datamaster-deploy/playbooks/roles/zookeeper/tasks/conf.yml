@@ -1,0 +1,38 @@
+- name: config zookeeper
+  tags: conf
+  template: src={{ item.tmpl }} dest={{ zookeeper_home }}/conf/{{ item.dst }}
+  with_items:
+      - { tmpl: zoo.cfg.j2, dst: zoo.cfg }
+  register: confstat
+
+- name: config zookeeper id
+  tags: conf
+  shell: |
+    cd {{zookeeper_data_root}}
+    echo {{zookeeper_listen_ip|replace('.','')|int()%100}} > myid
+
+- name: config control
+  tags: conf
+  template: src={{ item.tmpl }} dest={{ zookeeper_home }}/control/{{ item.dst }}
+  with_items:
+    - { tmpl: control_conf.py.j2, dst: control_conf.py }
+
+- name: check service status
+  tags: conf
+  clueserv: name=zookeeper path={{ zookeeper_home }} state=status
+  register: servstat
+  when: confstat.changed
+
+  #- debug: msg="{{ servstat.status }}"
+  #  tags: conf
+  #  when: confstat.changed
+
+- name: notify restart
+  shell: echo "config changed, restart service ..."
+  tags: conf
+  when:
+    - confstat.changed
+    - servstat.status == "started"
+  notify:
+    - restart zookeeper
+

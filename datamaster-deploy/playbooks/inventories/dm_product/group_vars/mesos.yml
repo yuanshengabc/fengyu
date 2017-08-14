@@ -1,0 +1,26 @@
+
+# XXX: mesos_master_ip & mesos_master_port
+# 在 spark 中也需要使用, 需要定义在 inventory 里
+# master ip
+mesos_master_ip_candi: "{% for h in groups['mesos'] %}
+                          {%- if (hostvars[h].is_mesos_master is defined and hostvars[h].is_mesos_master) %}{{ hostvars[h]['ansible_default_ipv4']['address'] }}{% endif %}
+                        {% endfor %}"
+#格式化后的ip
+mesos_master_ip: "{{ mesos_master_ip_candi | regex_replace('^[ ]*([^ ]*).*', '\\1') }}"
+#master 端口
+mesos_master_port: 5050
+
+# XXX: mesos_home
+# 在 spark 中也需要使用, 需要定义在 inventory 里
+#安装目录
+mesos_install_root: "{{ work_root_dir }}"
+#程序目录
+mesos_home: "{{ mesos_install_root }}/mesos"
+
+#集群名称
+mesos_cluster_name: xinghe
+##安装包名称 使用开始字符串匹配 格式为tar.gz
+mesos_package: mesos-centos
+#数据目录
+mesos_data_root: /data/datamaster/mesos
+#mesosmaster_ip: "{% for h in groups['mesos'] %}{%- if (hostvars[h].is_mesos_master is defined and hostvars[h].is_mesos_master) %}{{ hostvars[h]['ansible_default_ipv4']['address']}}{% endif %}{% endfor %}"

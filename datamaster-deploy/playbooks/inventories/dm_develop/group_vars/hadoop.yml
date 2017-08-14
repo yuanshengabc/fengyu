@@ -1,0 +1,48 @@
+---
+
+
+hdfs_cluster_name: datamaster    #集群名称
+hdfs_listen_ip: "{{ default_listen_ip }}"   ##监听ip
+
+hadoop_package: hadoop-2.7              #安装包名称 使用开始字符串匹配 格式为tar.gz
+
+hadoop_install_root: "{{ components_library }}"             ##安装根目录
+hadoop_home: "{{hadoop_install_root}}/hadoop"                 #hadoop home 目录
+hdfs_home: "{{hadoop_home}}"                                #hdfs home 目录
+hdfs_conf_path: "{{hdfs_home}}/etc/hadoop"                  #配置文件路径
+hdfs_log_pid_path: /data/datamaster/hadoop                             #log pid 路径
+hdfs_namenode_data_path:
+  - /data01/datamaster/dfs/nn
+  - /data02/datamaster/dfs/nn
+hdfs_journalnode_data_path: /data01/datamaster/dfs/jn
+
+hdfs_namenode_data_path_file_temp: "{% for v in hdfs_namenode_data_path %} file:///{{v}},{% endfor %}"
+hdfs_namenode_data_path_file: "{{ hdfs_namenode_data_path_file_temp | regex_replace(',$','') }}"
+#hdfs_journalnode_data_path_file_temp: "{% for v in hdfs_journalnode_data_path %} {{v}},{% endfor %}"
+#hdfs_journalnode_data_path_file: "{{ hdfs_journalnode_data_path_file_temp | regex_replace(',$','') }}"
+
+hdfs_datanode_data_path:
+  - /data07/datamaster/dfs/dn
+  - /data06/datamaster/dfs/dn
+  - /data05/datamaster/dfs/dn
+  - /data04/datamaster/dfs/dn
+  - /data03/datamaster/dfs/dn
+  - /data02/datamaster/dfs/dn
+  - /data01/datamaster/dfs/dn
+#nameservice: ns
+# zookeeper 连接信息
+zk_cn_tmp: "{% for h in groups['zookeeper'] %}{{ hostvars[h]['ansible_default_ipv4']['address'] }}:{{zookeeper_client_port}},{% endfor %}"
+# zookeeper 连接信息
+zk_cn: "{{ zk_cn_tmp | regex_replace('[ ]*,[ ]*', ',') | regex_replace(',$', '') }}"    #种子节点ip格式 “<ip1>,<ip2>”
+hdfs_datanode_data_path_file_temp: "{% for v in hdfs_datanode_data_path %} file://{{v}},{% endfor %}"
+hdfs_datanode_data_path_file: "{{ hdfs_datanode_data_path_file_temp | regex_replace(',$','') }}"
+hdfs_namenode_host: "{% for h in groups['hadoop'] %}{%- if (hostvars[h].is_namenode1 is defined and hostvars[h].is_namenode1) %}{{ hostvars[h]['ansible_default_ipv4']['address']}}{% endif %}{% endfor %}"
+hdfs_datanode_hosts_temp: "{% for h in groups['hadoop'] %}{%- if (hostvars[h].is_datanode is defined and hostvars[h].is_datanode) %}{{ hostvars[h]['ansible_default_ipv4']['address']}},{% endif %}{% endfor %}"
+hdfs_datanode_hosts: "{{ hdfs_datanode_hosts_temp | regex_replace(',$','') }}"
+dfs_http_address: "{{hdfs_namenode_host}}:50070"
+#hdfs_secondary_host: "{% for h in groups['hadoop'] %}{%- if (hostvars[h].is_secondary is defined and hostvars[h].is_secondary) %}{{ hostvars[h]['ansible_default_ipv4']['address']}}{% endif %}{% endfor %}"
+#dfs_secondary_http_address: "{{hdfs_secondary_host}}:50090"
+journalnode_edit_dirs_temp: "{% for h in groups['hadoop'] %}{%- if (hostvars[h].is_journalnode is defined and hostvars[h].is_journalnode) %}{{ hostvars[h]['ansible_default_ipv4']['address']}}:8485;{% endif %}{% endfor %}"
+journalnode_edit_dirs: "{{ journalnode_edit_dirs_temp | regex_replace(';$','') }}"
+yarn_resource_host: "{{hdfs_namenode_host}}"
+jobhistory_host: "{% for h in groups['hadoop'] %}{%- if (hostvars[h].is_jobhistory is defined and hostvars[h].is_jobhistory) %}{{ hostvars[h]['ansible_default_ipv4']['address']}}{% endif %}{% endfor %}"

@@ -1,0 +1,13 @@
+---
+
+- name: clear datas
+  tags: danger,clear
+  shell: rm -r {{ item }}/*
+  register: clearstat
+  with_items:
+    - "{{ hdfs_namenode_data_path }}"
+    - "{{ hdfs_datanode_data_path }}"
+  changed_when: clearstat.rc == 0
+  failed_when: False
+
+

@@ -1,0 +1,12 @@
+---
+#magneto_install_root: /opt
+#magneto_home: "{{magneto_install_root}}/magneto"
+
+datamaster_install_root: /opt
+
+datamaster_home: "{{datamaster_install_root}}/datamaster"
+datamaster_conf_dir: "{{datamaster_home}}/conf"
+
+mysql_listen_ip: "{{ default_listen_ip }}"  #mysql主机ip
+mysql_user_pass: datA123!@# #初始化的root 密码 新建用户也使用同一密码
+mysql_user: datamaster  #新建用户 开启%访问

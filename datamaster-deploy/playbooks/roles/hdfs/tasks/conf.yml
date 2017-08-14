@@ -1,0 +1,89 @@
+- name: config hdfs
+  tags: conf
+  template: src={{ item.tmpl }} dest={{ hdfs_home }}/etc/hadoop/{{ item.dst }}
+  with_items:
+    - { tmpl: hadoop-env.sh.j2, dst: hadoop-env.sh }
+    - { tmpl: core-site.xml.j2, dst: core-site.xml }
+    - { tmpl: hdfs-site.xml.j2, dst: hdfs-site.xml }
+    - { tmpl: mapred-site.xml.j2, dst: mapred-site.xml }
+    - { tmpl: yarn-site.xml.j2, dst: yarn-site.xml}
+    - { tmpl: slaves.j2, dst: slaves }
+  register: confstat
+
+- name: config control
+  tags: conf
+  template: src={{ item.tmpl }} dest={{ hadoop_home }}/control/{{ item.dst }}
+  with_items:
+    - { tmpl: hdfs_conf.py.j2, dst: hdfs_conf.py }
+
+- name: check id_rsa exit
+  tags: conf 
+  file: path='~/.ssh/id_rsa' state=file
+  register: id_rsa_state
+  failed_when: 0
+
+- name: create ssh-key
+  tags: conf
+  shell: |
+    rm -rf /home/magneto/.ssh/id_rsa
+    ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+    warn=no
+  when:
+    - is_namenode is defined
+    - is_namenode
+    - id_rsa_state.state == 'absent'
+
+- name: set namenode ssh
+  tags: conf
+  sudo: yes
+  lineinfile:
+    line: "StrictHostKeyChecking no"
+    dest: /etc/ssh/ssh_config
+    regexp: "^StrictHostKeyChecking no.*"
+    insertbefore: "^[ \t]*#.*deepclue:END"
+
+- name: copy key local
+  tags: conf
+  fetch: src=~/.ssh/id_rsa.pub dest={{publish_library}}/ flat=yes
+  when:
+    - is_namenode is defined
+    - is_namenode
+
+- name: copy key to hosts
+  tags: conf
+  copy: src={{publish_library}}/id_rsa.pub dest={{remote_pkgs_library}}/
+
+- name: cat ssh-key to authorized_keys
+  tags: conf
+  shell: |
+    cat {{remote_pkgs_library}}/id_rsa.pub >> ~/.ssh/authorized_keys
+    chmod 0600 ~/.ssh/authorized_keys
+    warn=no
+
+
+- name: conf cluster_name
+  tags: init
+  shell: "{{ hdfs_home }}/bin/hdfs namenode -format {{hdfs_cluster_name}}"
+  when:
+    - is_namenode is defined
+    - is_namenode
+
+
+- name: check hadoop status
+  tags: conf
+  clueserv: name=hdfs path={{ hdfs_home }} state=status
+  register: hadoopstat
+  when: confstat.changed
+
+  #- debug: msg="{{ servstat.status }}"
+  #  tags: conf
+  #  when: confstat.changed
+
+- name: notify restart hadoop
+  shell: echo "config changed, restart hadoop ..."
+  tags: conf
+  when:
+    - confstat.changed
+    - hadoopstat.status == "started"
+  notify:
+    - restart hadoop

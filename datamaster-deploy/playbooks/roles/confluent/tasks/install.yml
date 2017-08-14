@@ -1,0 +1,54 @@
+---
+
+- block:
+  - name: check package list
+    tags: install,find_package
+    find: paths={{ publish_library }} use_regex=True patterns="^{{ confluent_package }}"
+    register: pkg_files
+    delegate_to: 127.0.0.1
+    failed_when: pkg_files.matched == 0
+
+  - name: get the package name
+    tags: install,find_package
+    #vars:
+      #- pkg_file_name: "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+    shell: echo "{{ pkg_files.files | sort(attribute='path', reverse=True, case_sensitive=False) | map(attribute='path') | list | first}}"
+    register: pkg_file_name
+    delegate_to: 127.0.0.1
+    changed_when: False
+
+  - debug: msg="package = {{ pkg_file_name.stdout }}"
+    tags: install,find_package
+    delegate_to: 127.0.0.1
+
+  - name: sync installation package
+    tags: install
+    copy: src={{ pkg_file_name.stdout }} dest={{ remote_pkgs_library }}/
+
+  - name: link installation package
+    tags: install
+    file: src="{{ remote_pkgs_library }}/{{ pkg_file_name.stdout | basename }}" dest={{ remote_pkgs_library }}/confluent.used state=link
+
+  - name: install package
+    tags: install
+    vars:
+      - src_pkg_full_path: "{{ remote_pkgs_library }}/{{ pkg_file_name.stdout | basename }}"
+    shell: >
+      mkdir -p {{ confluent_install_root }} && cd {{ confluent_install_root }}
+      && pkg_name=`tar -tzf {{ src_pkg_full_path }} | head -1 | cut -d "/" -f 1`
+      && rm -rf ${pkg_name}
+      && tar -xzf {{ src_pkg_full_path }}
+      && ln -s -f -T ${pkg_name} confluent
+      warn=no
+
+  - name: setup data dirs
+    tags: install
+    file: path={{ item }} state=directory
+    with_items:
+      - "{{ confluent_path_log }}"
+      - "{{ kafka_path_log }}"
+      - "{{ schema_registry_path_log }}"
+
+  - name: install control
+    tags: install,install_control
+    copy: src=files/control dest="{{ confluent_home }}"
