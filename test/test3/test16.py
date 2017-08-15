@@ -3,3 +3,7 @@ import gmpy2
 p, q, e = 473398607161, 4511491, 17
 d = gmpy2.invert(e, (p - 1) * (q - 1))
 print d
+
+
+# Exponent: 65537 (0x10001)
+# Modulus=A41006DEFD378B7395B4E2EB1EC9BF56A61CD9C3B5A0A73528521EEB2FB817A7

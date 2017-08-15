@@ -1,5 +1,6 @@
 # string = 'XMZFSLDZ'
-string = 'NEQETLYDSF'
+string = 'zqc{fkqtl_fp_yfd_py}'
+string = string.upper()
 for i in range(26):
     string1 = ''
     for j in range(len(string)):
@@ -8,3 +9,4 @@ for i in range(26):
         else:
             string1 = string1 + chr(ord(string[j]) + i)
     print string1.lower()
+intwoisbigsb
