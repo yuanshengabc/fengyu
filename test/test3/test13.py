@@ -9,4 +9,3 @@ for i in range(26):
         else:
             string1 = string1 + chr(ord(string[j]) + i)
     print string1.lower()
-intwoisbigsb
